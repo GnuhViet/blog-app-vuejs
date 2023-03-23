@@ -94,7 +94,13 @@
 <script>
 export default {
     name: 'Header',
+    mounted() {
+      let recaptchaScript = document.createElement('script')
+      recaptchaScript.setAttribute('src', './js/main.js')
+      document.head.appendChild(recaptchaScript)
+    },
 }
 </script>
+
 
 <style></style>
