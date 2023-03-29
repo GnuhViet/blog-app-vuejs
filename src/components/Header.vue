@@ -61,6 +61,8 @@
                 <li><a href="styles.html" title="">Styles</a></li>
                 <li><a href="page-about.html" title="">About</a></li>
                 <li><a href="page-contact.html" title="">Contact</a></li>
+                <li><router-link to="/login">Login</router-link></li>
+                <li><router-link to="/register">Register</router-link></li>
             </ul> <!-- end header__nav -->
 
             <ul class="header__social">
