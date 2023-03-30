@@ -73,6 +73,7 @@
 
 <script>
 import axios from 'axios';
+import { useStore } from 'vuex';
 export default {
     name: 'Master',
     components: {
@@ -88,6 +89,15 @@ export default {
 
     created() {
         this.testApi();
+    },
+
+    mounted() {
+        const store = useStore();
+        let jwt = sessionStorage.getItem("JWT");
+        console.log(jwt);
+        if(jwt != null){
+            store.dispatch('setAuth', true);
+        }
     },
 
     methods: {
