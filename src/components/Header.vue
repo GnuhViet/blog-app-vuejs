@@ -61,8 +61,9 @@
                 <li><a href="styles.html" title="">Styles</a></li>
                 <li><a href="page-about.html" title="">About</a></li>
                 <li><a href="page-contact.html" title="">Contact</a></li>
-                <li><router-link to="/login">Login</router-link></li>
-                <li><router-link to="/register">Register</router-link></li>
+                <li v-if="!auth"><router-link to="/login">Login</router-link></li>
+                <li v-if="!auth"><router-link to="/register">Register</router-link></li>
+                <li v-if="auth"><router-link to="/" @click="logout">Logout</router-link></li>
             </ul> <!-- end header__nav -->
 
             <ul class="header__social">
@@ -94,6 +95,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
 export default {
     name: 'Header',
     mounted() {
@@ -101,6 +104,18 @@ export default {
       recaptchaScript.setAttribute('src', './js/main.js')
       document.head.appendChild(recaptchaScript)
     },
+    setup() {
+        const store = useStore();
+        const auth = computed(() => store.state.authenticated)
+        const logout = async () => {
+            sessionStorage.removeItem("JWT");
+            store.dispatch('setAuth', false);
+        }
+        return{
+            auth,
+            logout
+        }
+    }
 }
 </script>
 

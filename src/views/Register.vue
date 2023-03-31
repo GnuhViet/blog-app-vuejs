@@ -43,10 +43,12 @@ export default {
     const headers = {
       'Content-Type': 'application/json',
     }
+
+    const router = useRouter();
     const submit = async () => {
 
       const json = JSON.stringify(data);
-      const res = await axios.post('https://localhost:44303/api/Account/SignUp', json, {
+      const res = await axios.post('https://localhost:7185/api/Account/SignUp', json, {
         headers: headers
       }).catch(function (error) {
         if (error.response) {
@@ -66,6 +68,7 @@ export default {
         }
         console.log(error.config);
       });
+      await router.push('/login');
     }
 
     return {
