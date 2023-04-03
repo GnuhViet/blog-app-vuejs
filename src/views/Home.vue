@@ -74,6 +74,7 @@
 <script>
 import axios from 'axios';
 import { useStore } from 'vuex';
+import router from '@/router';
 export default {
     name: 'Master',
     components: {
@@ -81,7 +82,6 @@ export default {
     data() {
         return {
             filterData: {
-                blogEntryId: 79,
             },
             table_data: [],
         }
@@ -98,19 +98,20 @@ export default {
         if(jwt != null){
             store.dispatch('setAuth', true);
         }
+        else{
+            //nếu chưa đăng nhập thì trả về trang login
+            store.dispatch('setAuth', false);
+            router.push('/login');
+        }
     },
 
     methods: {
         testApi() {
-            axios.get("https://codeforces.com/api/blogEntry.comments", {
-                params: {
-                    blogEntryId: this.filterData.blogEntryId,
-                }
-            })
+            axios.get('https://localhost:7185/WeatherForecast')
                 .then((res) => {
                     console.log(res.data);
-                    let resc = res.data;
-                    this.table_data = resc.result;
+                    // let resc = res.data;
+                    // this.table_data = resc.result;
                 });
         }
     },
