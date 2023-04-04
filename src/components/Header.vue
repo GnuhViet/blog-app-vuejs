@@ -63,6 +63,7 @@
                 <li><a href="page-contact.html" title="">Contact</a></li>
                 <li v-if="!auth"><router-link to="/login">Login</router-link></li>
                 <li v-if="!auth"><router-link to="/register">Register</router-link></li>
+                <li v-if="auth"><router-link to="/profile">Profile</router-link></li>
                 <li v-if="auth"><router-link to="/" @click="logout">Logout</router-link></li>
             </ul> <!-- end header__nav -->
 
