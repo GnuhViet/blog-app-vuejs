@@ -3,6 +3,18 @@
 
     <form name="contactForm" id="contactForm" method="post" action="" autocomplete="off">
         <fieldset>
+            <div class="form-field">
+                <div class="categories-container">
+                    <div v-for="category in categories" :key="category.id" class="category">
+                        <label :for="'category-' + category.id">
+                            <input type="checkbox" :id="'category-' + category.id" :value="category.id"
+                                v-model="selectedCategories">
+                            {{ category.name }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="form-field">
                 <input name="cName" id="cName" class="full-width" placeholder="Your Name" value="" type="text">
@@ -60,6 +72,32 @@ export default {
     name: 'CreateArticle',
     components: {
         'editor': Editor
-    }
+    },
+    data() {
+        return {
+            categories: [],
+            selectedCategories: [],
+        };
+    },
+    mounted() {
+        axios.get('https://localhost:7185/api/Category')
+            .then(response => {
+                this.categories = response.data;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    },
 }
 </script>
+
+<style>
+.categories-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.category {
+    flex-basis: 33.33%;
+}
+</style>
