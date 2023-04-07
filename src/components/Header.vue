@@ -37,18 +37,15 @@
                     <router-link to="/">Home</router-link>
                 </li>
 
-                
                 <li class="has-children">
                     <a href="#0" title="">Categories</a>
                     <ul class="sub-menu">
-                        <li><a href="category.html">Lifestyle</a></li>
-                        <li><a href="category.html">Health</a></li>
-                        <li><a href="category.html">Family</a></li>
-                        <li><a href="category.html">Management</a></li>
-                        <li><a href="category.html">Travel</a></li>
-                        <li><a href="category.html">Work</a></li>
+                        <li v-for="category in categories" :key="category.code">
+                            <router-link :to="'/category/' + category.code">{{ category.name }}</router-link>
+                        </li>
                     </ul>
                 </li>
+
                 <li class="has-children">
                     <a href="#0" title="">Blog Posts</a>
                     <ul class="sub-menu">
@@ -63,6 +60,16 @@
                 <li><a href="page-contact.html" title="">Contact</a></li>
                 <li v-if="!auth"><router-link to="/login">Login</router-link></li>
                 <li v-if="!auth"><router-link to="/register">Register</router-link></li>
+
+                <li v-if="auth" class="has-children">
+                    <a href="#0" title="">Manage</a>
+                    <ul class="sub-menu">
+                        <li><router-link to="/create">Create Post</router-link></li>
+                        <li><router-link to="/login">Manage</router-link></li>
+                    </ul>
+                </li>
+
+                <li v-if="auth"><router-link to="/profile">Profile</router-link></li>
                 <li v-if="auth"><router-link to="/" @click="logout">Logout</router-link></li>
             </ul> <!-- end header__nav -->
 
@@ -95,14 +102,29 @@
 </template>
 
 <script>
+import axios from 'axios';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 export default {
     name: 'Header',
+    data() {
+        return {
+            categories: []
+        }
+    },
+    created() {
+        axios.get('https://localhost:7185/api/Category')
+            .then(response => {
+                this.categories = response.data;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    },
     mounted() {
-      let recaptchaScript = document.createElement('script')
-      recaptchaScript.setAttribute('src', './js/main.js')
-      document.head.appendChild(recaptchaScript)
+        let recaptchaScript = document.createElement('script')
+        recaptchaScript.setAttribute('src', './js/main.js')
+        document.head.appendChild(recaptchaScript)
     },
     setup() {
         const store = useStore();
@@ -111,7 +133,7 @@ export default {
             sessionStorage.removeItem("JWT");
             store.dispatch('setAuth', false);
         }
-        return{
+        return {
             auth,
             logout
         }
