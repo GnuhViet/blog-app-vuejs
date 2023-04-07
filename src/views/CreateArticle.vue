@@ -8,27 +8,26 @@
                     <div v-for="category in categories" :key="category.id" class="category">
                         <label :for="'category-' + category.id">
                             <input type="checkbox" :id="'category-' + category.id" :value="category.id"
-                                v-model="selectedCategories">
+                                v-model="inputData.selectedCategories">
                             {{ category.name }}
                         </label>
                     </div>
                 </div>
             </div>
 
-
             <div class="form-field">
-                <input name="cName" id="cName" class="full-width" placeholder="Your Name" value="" type="text">
+                <input name="cTitle" id="cTitle" class="full-width" placeholder="Title" type="text" v-model="inputData.title">
             </div>
 
             <div class="form-field">
-                <input name="cEmail" id="cEmail" class="full-width" placeholder="Your Email" value="" type="text">
+                <input name="cThumbnail" id="cThumbnail" class="full-width" placeholder="Thumbnail" type="text" v-model="inputData.thumbnail">
             </div>
 
             <div class="form-field">
-                <input name="cWebsite" id="cWebsite" class="full-width" placeholder="Website" value="" type="text">
+                <input name="cDescription" id="cDescription" class="full-width" placeholder="Description" type="text" v-model="inputData.description">
             </div>
 
-            <editor api-key="dbg7svsu8ovrt7sgcc1su1vw1rdya8ygm0ll3im2av4185gi" :init="{
+            <editor v-model="inputData.content" api-key="dbg7svsu8ovrt7sgcc1su1vw1rdya8ygm0ll3im2av4185gi" :init="{
                 height,
                 menubar,
                 plugins: [
@@ -56,7 +55,7 @@
                 content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
             }" />
 
-            <input name="submit" id="submit" class="btn btn--primary btn-wide btn--large full-width" value="Send Message"
+            <input @click.prevent="submitForm()" name="submit" id="submit" class="btn btn--primary btn-wide btn--large full-width" value="Send Message"
                 type="submit">
 
         </fieldset>
@@ -65,29 +64,63 @@
 
 <script>
 import axios from 'axios';
-import { computed } from 'vue';
+import Editor from '@tinymce/tinymce-vue';
 import { useStore } from 'vuex';
-import Editor from '@tinymce/tinymce-vue'
 export default {
     name: 'CreateArticle',
     components: {
-        'editor': Editor
+        'editor': Editor,
     },
     data() {
         return {
+            inputData: {
+                selectedCategories: [],
+                title: "",
+                thumbnail: "",
+                description: "",
+                content: "",
+            },
             categories: [],
-            selectedCategories: [],
+            filterData:{
+
+            }
         };
     },
     mounted() {
-        axios.get('https://localhost:7185/api/Category')
-            .then(response => {
-                this.categories = response.data;
+        const store = useStore();
+        let jwt = sessionStorage.getItem("JWT");
+        console.log(jwt);
+        if(jwt != null){
+            store.dispatch('setAuth', true);
+        };
+        this.whenMounted();
+    },
+    methods: {
+        whenMounted(){
+            axios.get('https://localhost:7185/api/Category')
+                .then(response => {
+                    this.categories = response.data;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        submitForm(){
+            var token = sessionStorage.getItem("JWT");
+
+            const headers = {
+                'Authorization': "Bearer " + token,
+            }
+            console.log(this.inputData);
+            axios.post("https://localhost:7185/api/Article", this.inputData, {headers: headers})
+            .then((res) => {
+                console.log(res);
             })
             .catch(error => {
                 console.log(error);
             });
-    },
+        }
+    }
 }
 </script>
 
