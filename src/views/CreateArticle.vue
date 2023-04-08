@@ -118,7 +118,6 @@ export default {
             .then((res) => {
                 console.log(res);
                 if(res.status == 200){
-                    //Chuyển sang trang home
                     alert("Create Success!!");
                 }
             })
