@@ -41,7 +41,8 @@
                     <a href="#0" title="">Categories</a>
                     <ul class="sub-menu">
                         <li v-for="category in categories" :key="category.code">
-                            <router-link :to="'/category/' + category.code">{{ category.name }}</router-link>
+                            <a href="single-video.html">{{ category.name }}</a>
+                            <!-- <router-link :to="'/category/' + category.code">{{ category.name }}</router-link> -->
                         </li>
                     </ul>
                 </li>
@@ -61,11 +62,11 @@
                 <li v-if="!auth"><router-link to="/login">Login</router-link></li>
                 <li v-if="!auth"><router-link to="/register">Register</router-link></li>
 
-                <li v-if="auth" class="has-children">
+                <li :style="{ visibility: visibility }" id="manage" class="has-children">
                     <a href="#0" title="">Manage</a>
                     <ul class="sub-menu">
                         <li><router-link to="/create">Create Post</router-link></li>
-                        <li><router-link to="/login">Manage</router-link></li>
+                        <li><router-link to="/">Manage</router-link></li>
                     </ul>
                 </li>
 
@@ -137,9 +138,11 @@ export default {
             auth,
             logout
         }
-    }
+    },
+    computed: {
+        visibility() {
+            return this.auth ? 'visible' : 'hidden';
+        }
+    },
 }
 </script>
-
-
-<style></style>
