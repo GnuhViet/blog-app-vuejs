@@ -8,7 +8,7 @@
                     <div v-for="category in categories" :key="category.id" class="category">
                         <label :for="'category-' + category.id">
                             <input type="checkbox" :id="'category-' + category.id" :value="category.id"
-                                v-model="inputData.selectedCategories">
+                                v-model="inputData.categoryIds">
                             {{ category.name }}
                         </label>
                     </div>
@@ -24,7 +24,7 @@
             </div>
 
             <div class="form-field">
-                <input name="cDescription" id="cDescription" class="full-width" placeholder="Description" type="text" v-model="inputData.description">
+                <input name="cDescription" id="cDescription" class="full-width" placeholder="Description" type="text" v-model="inputData.shortDescription">
             </div>
 
             <editor v-model="inputData.content" api-key="dbg7svsu8ovrt7sgcc1su1vw1rdya8ygm0ll3im2av4185gi" :init="{
@@ -74,10 +74,11 @@ export default {
     data() {
         return {
             inputData: {
-                selectedCategories: [],
+                id: 0,
+                categoryIds: [],
                 title: "",
                 thumbnail: "",
-                description: "",
+                shortDescription: "",
                 content: "",
             },
             categories: [],
@@ -111,9 +112,9 @@ export default {
                 'Authorization': "Bearer " + token,
             }
             console.log(this.inputData);
-            axios.post("https://localhost:7185/api/Article", {
+            axios.post("https://localhost:7185/api/Article", this.inputData, {
                 headers: headers,
-            }, this.inputData)
+            })
             .then((res) => {
                 console.log(res);
             })
