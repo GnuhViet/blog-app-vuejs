@@ -107,12 +107,13 @@ export default {
         },
         submitForm(){
             var token = sessionStorage.getItem("JWT");
-
             const headers = {
                 'Authorization': "Bearer " + token,
             }
             console.log(this.inputData);
-            axios.post("https://localhost:7185/api/Article", this.inputData, {headers: headers})
+            axios.post("https://localhost:7185/api/Article", {
+                headers: headers,
+            }, this.inputData)
             .then((res) => {
                 console.log(res);
             })
