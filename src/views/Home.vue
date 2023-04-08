@@ -1,14 +1,4 @@
 <template>
-    <!-- preloader
-    ================================================== -->
-    <!-- <div id="preloader">
-        <div id="loader" class="dots-fade">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-    </div> -->
-
     <div class="masonry-wrap">
 
         <div class="masonry">
@@ -95,10 +85,10 @@ export default {
         const store = useStore();
         let jwt = sessionStorage.getItem("JWT");
         console.log(jwt);
-        if(jwt != null){
+        if (jwt != null) {
             store.dispatch('setAuth', true);
         }
-        else{
+        else {
             //nếu chưa đăng nhập thì trả về trang login
             store.dispatch('setAuth', false);
             router.push('/login');
@@ -107,11 +97,12 @@ export default {
 
     methods: {
         testApi() {
-            axios.get('https://localhost:7185/WeatherForecast')
+            axios.get("https://localhost:7185/api/Article", {
+            })
                 .then((res) => {
                     console.log(res.data);
-                    // let resc = res.data;
-                    // this.table_data = resc.result;
+                    let resc = res.data;
+                    this.table_data = resc.result;
                 });
         }
     },

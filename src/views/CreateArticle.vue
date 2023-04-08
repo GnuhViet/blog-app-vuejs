@@ -55,7 +55,7 @@
                 content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
             }" />
 
-            <input @click.prevent="submitForm()" name="submit" id="submit" class="btn btn--primary btn-wide btn--large full-width" value="Send Message"
+            <input @click.prevent="submitForm()" name="submit" id="submit" class="btn btn--primary btn-wide btn--large full-width" value="Create Post"
                 type="submit">
 
         </fieldset>
@@ -117,6 +117,10 @@ export default {
             })
             .then((res) => {
                 console.log(res);
+                if(res.status == 200){
+                    //Chuyển sang trang home
+                    alert("Create Success!!");
+                }
             })
             .catch(error => {
                 console.log(error);
