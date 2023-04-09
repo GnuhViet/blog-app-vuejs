@@ -4,27 +4,16 @@
     <div v-else class="masonry-wrap">
       <div class="masonry">
         <div class="grid-sizer"></div>
-        <article
-          class="masonry__brick entry format-standard"
-          v-for="(item, index) in displayedItems"
-          :key="index"
-        >
+        <article class="masonry__brick entry format-standard" v-for="(item, index) in displayedItems" :key="index">
           <div class="entry__thumb">
             <a href="single-standard.html" class="entry__thumb-link">
-              <img
-                src="public/images/thumbs/masonry/woodcraft-600.jpg"
-                srcset="
-                  images/thumbs/masonry/woodcraft-600.jpg  1x,
-                  images/thumbs/masonry/woodcraft-1200.jpg 2x
-                "
-                alt=""
-              />
+              <img :src="item.thumbnail" alt="">
             </a>
           </div>
           <div class="entry__text">
             <div class="entry__header">
               <h2 class="entry__title">
-                <a href="single-standard.html">{{ item.title }}</a>
+                <router-link :to="'/details/' + item.id">{{ item.title }}</router-link>
               </h2>
               <div class="entry__meta">
                 <span class="entry__meta-cat">
@@ -32,7 +21,7 @@
                   <a href="category.html">Photography</a>
                 </span>
                 <span class="entry__meta-date">
-                  <a href="single-standard.html">{{ item.createDate }}</a>
+                  <a href="#">{{ item.createDate }}</a>
                 </span>
               </div>
             </div>
@@ -54,13 +43,7 @@
           </li>
           <li v-for="pageNumber in pages" :key="pageNumber">
             <a v-if="pageNumber === currentPage" class="pgn__num current"> {{ pageNumber }}</a>
-            <a
-              v-else
-              class="pgn__num"
-              href="#0"
-              @click="changePage(pageNumber)"
-              >{{ pageNumber }}</a
-            >
+            <a v-else class="pgn__num" href="#0" @click="changePage(pageNumber)">{{ pageNumber }}</a>
           </li>
           <li v-if="currentPage < totalPages">
             <a class="pgn__next" href="#0" @click="nextPage">Next</a>
@@ -101,9 +84,9 @@ export default {
       return pagesArray;
     },
     displayedItems() {
-        const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-        const endIndex = startIndex + this.itemsPerPage;
-        return this.table_data.slice(startIndex, endIndex);
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      return this.table_data.slice(startIndex, endIndex);
     },
   },
 
@@ -115,7 +98,6 @@ export default {
     } else {
       //nếu chưa đăng nhập thì trả về trang login
       store.dispatch("setAuth", false);
-      router.push("/login");
     }
   },
 
@@ -135,13 +117,13 @@ export default {
         });
     },
     changePage(pageNumber) {
-        this.currentPage = pageNumber;
+      this.currentPage = pageNumber;
     },
     nextPage() {
-        this.currentPage++;
+      this.currentPage++;
     },
     prevPage() {
-        this.currentPage--;
+      this.currentPage--;
     },
   },
 };
