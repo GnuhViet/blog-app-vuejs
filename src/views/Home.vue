@@ -56,8 +56,9 @@
 
 <script>
 import axios from "axios";
-import { useStore } from "vuex";
+import { mapGetters, useStore } from "vuex";
 import router from "@/router";
+import { onUpdated } from 'vue';
 export default {
   name: "Master",
   components: {},
@@ -88,6 +89,16 @@ export default {
       const endIndex = startIndex + this.itemsPerPage;
       return this.table_data.slice(startIndex, endIndex);
     },
+    ...mapGetters({
+      tableData: 'getTableData',
+    })
+  },
+
+  watch: {
+    tableData(newValue){
+      this.table_data = newValue;
+      console.log(this.table_data);
+    }
   },
 
   mounted() {
@@ -127,6 +138,9 @@ export default {
     },
   },
 };
+onUpdated(() => {
+  console.log(tableData);
+})
 </script>
 
 <style></style>
