@@ -16,7 +16,6 @@
           method="get"
           class="header__search-form"
           action="#"
-          v-on:submit.prevent="search"
         >
           <label>
             <span class="hide-content">Search for:</span>
@@ -31,7 +30,7 @@
           </label>
           <input type="submit" class="header__search-submit" value="Search" />
         </form>
-        <a href="#0" title="Close Search" class="header__search-close">Close</a>
+        <a v-on:click="search" href="#0" title="Close Search" class="header__search-close">Close</a>
       </div>
       <!-- end header__search -->
 
@@ -50,8 +49,8 @@
         <li class="has-children">
           <a href="#0" title="">Categories</a>
           <ul class="sub-menu">
-            <li v-for="category in categories" :key="category.code">
-              <a href="single-video.html">{{ category.name }}</a>
+            <li v-for="category in categories" :key="category.id">
+              <a v-on:click="searchByCategory(category.id)" href="#">{{ category.name }}</a>
               <!-- <router-link :to="'/category/' + category.code">{{ category.name }}</router-link> -->
             </li>
           </ul>
@@ -119,6 +118,7 @@ export default {
       categories: [],
       table_data: [],
       title: "",
+      selectedCategory: "",
     };
   },
   created() {
@@ -126,6 +126,7 @@ export default {
       .get("https://localhost:7185/api/Category")
       .then((response) => {
         this.categories = response.data;
+        console.log(this.categories);
       })
       .catch((error) => {
         console.log(error);
@@ -138,15 +139,25 @@ export default {
   },
   methods: {
     search(){
-      axios.get(`https://localhost:7185/api/Article/search/${this.title}`)
-      .then((res) => {
-        this.table_data = res.data.data;
-        store.commit('setTableData', this.table_data);
-      })
+      if(this.title.trim() != ""){
+        axios.get(`https://localhost:7185/api/Article/search/${this.title}`)
+        .then((res) => {
+          this.table_data = res.data.data;
+          store.commit('setTableData', this.table_data);
+        })
+      }
+      else{
+        store.commit('setTableData', '');
+      }
+    },
+    searchByCategory(category){
+      this.selectedCategory = category;
+      store.commit('setCategoryId', this.selectedCategory);
     },
     ...mapActions({
-      setTableData: 'setTableData'
-    })
+      setTableData: 'setTableData',
+      setCategoryId: 'setCategoryId'
+    }),
   },
   setup() {
     const store = useStore();
