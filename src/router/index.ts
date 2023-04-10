@@ -5,6 +5,7 @@ import Register from "../views/Register.vue";
 import Profile from "../views/Profile.vue";
 import CreateArticle from "../views/CreateArticle.vue";
 import ArticleDetails from "../views/ArticleDetails.vue";
+import ArticleManage from "../views/ArticleManage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   { path: "/", component: Home },
@@ -12,6 +13,7 @@ const routes: Array<RouteRecordRaw> = [
   { path: "/register", component: Register},
   { path: "/profile",component:Profile},
   { path: "/create",component:CreateArticle},
+  { path: "/manage",component:ArticleManage},
   {
     path: '/details/:id',
     name: 'ArticleDetails',

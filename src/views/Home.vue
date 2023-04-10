@@ -17,11 +17,11 @@
               </h2>
               <div class="entry__meta">
                 <span class="entry__meta-cat">
-                  <a href="category.html">Design</a>
-                  <a href="category.html">Photography</a>
+                  <a v-for="category in item.categories" :key="category.id" :href="'category.html?id=' + category.id">{{
+                    category.name }}</a>
                 </span>
                 <span class="entry__meta-date">
-                  <a href="#">{{ item.createDate }}</a>
+                  <p>{{ item.formattedCreateDate }}</p>
                 </span>
               </div>
             </div>
@@ -95,7 +95,7 @@ export default {
   },
 
   watch: {
-    tableData(newValue){
+    tableData(newValue) {
       this.table_data = newValue;
       console.log(this.table_data);
     }

@@ -15,10 +15,11 @@
             {{ article.title }}
           </h1>
           <ul class="entry__header-meta">
-            <li class="author">By <a href="#0">Jonathan Doe</a></li>
-            <li class="date">{{ article.createDate }}</li>
+            <li class="author">By <a href="#0">{{ article.authorName }}</a></li>
+            <li class="date">{{ article.formattedCreateDate }}</li>
             <li class="cat-links">
-              <a href="#0">Marketing</a><a href="#0">Management</a>
+              <a v-for="category in article.categories" :key="category.id" :href="'category.html?id=' + category.id">{{
+                    category.name }}</a>
             </li>
           </ul>
         </div>
