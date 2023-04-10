@@ -2,7 +2,7 @@
   <body>
     <div v-if="!isEditing" class="profile">
       <img
-        :src= "table_data.avatar ? 'https://localhost:7185' + table_data.avatar : (imagePreview ? imagePreview : 'https://cdn-icons-png.flaticon.com/512/149/149071.png')"
+        :src= "table_data.avatar ? table_data.avatar : (imagePreview ? imagePreview : 'https://cdn-icons-png.flaticon.com/512/149/149071.png')"
         alt="User Avatar">
       <h1>{{ table_data.username }}</h1>
       <table>
@@ -22,7 +22,7 @@
       <button @click="isEditing = true">Edit</button>
     </div>
     <div v-else class="profile">
-      <img :src="table_data.avatar ? 'https://localhost:7185' + table_data.avatar : (imagePreview ? imagePreview : 'https://cdn-icons-png.flaticon.com/512/149/149071.png')" alt="User Avatar"
+      <img id="editImage" :src="table_data.avatar ? table_data.avatar : (imagePreview ? imagePreview : 'https://cdn-icons-png.flaticon.com/512/149/149071.png')" alt="User Avatar"
         v-if="isEditing" onclick="document.getElementById('input-image').click()">
       <form @submit.prevent="saveData">
         <input id="input-image" type="file" style="display: none" accept="image/*" @change="handleImageUpload">
@@ -71,10 +71,13 @@ export default {
         headers: headers,
       })
         .then((res) => {
-          console.log(res);
           let resc = res.data.user;
           this.blogUserId = resc.blogUserId;
           this.table_data = resc;
+          console.log(this.table_data);
+          if (this.table_data.avatar !== null) {
+            this.table_data.avatar = 'https://localhost:7185' + this.table_data.avatar
+          }
           console.log(this.table_data);
         })
         .catch((error) => {
@@ -86,6 +89,7 @@ export default {
       this.imageFile = file;
       this.toBase64(file).then((base64String) => {
         this.imagePreview = base64String;
+        document.getElementById('editImage').src = base64String;
       });
     },
     saveData() {
