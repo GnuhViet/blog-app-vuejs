@@ -95,16 +95,31 @@
         });
 
         searchWrap.on('click',  function(e) {
-            if( !$(e.target).is('.search-field') ) {
-                closeSearch.trigger('click');
-            }
+            // if( !$(e.target).is('.search-field') ) {
+            //     closeSearch.trigger('click');
+            // }
         });
             
         searchField.on('click', function(e){
             e.stopPropagation();
         });
+
+        searchField.on('keypress', function(e) {
+            if (e.which === 13 && searchField.val().length > 0) {
+                // Thực hiện tìm kiếm tại đây
+                console.log("Search for: " + searchField.val());
+            }
+        });
+        
+        searchField.on('keyup', function() {
+            if (searchField.val().length > 0) {
+                searchWrap.addClass('search-active');
+            } else {
+                searchWrap.removeClass('search-active');
+            }
+        });
             
-        searchField.attr({placeholder: 'Type Keywords', autocomplete: 'off'});
+        // searchField.attr({placeholder: 'Type Keywords', autocomplete: 'off'});
 
     };
 

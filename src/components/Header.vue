@@ -1,148 +1,234 @@
 <template>
-    <!-- site header
+  <!-- site header
     ================================================== -->
-    <header class="s-header">
+  <header class="s-header">
+    <!-- icon -->
+    <div class="header__top">
+      <div class="header__logo">
+        <router-link to="/" class="site-logo"
+          ><img src="images/logo.svg" alt="Homepage"
+        /></router-link>
+      </div>
 
-        <!-- icon -->
-        <div class="header__top">
-            <div class="header__logo">
-                <router-link to="/" class="site-logo"><img src="images/logo.svg" alt="Homepage"></router-link>
-            </div>
+      <div class="header__search">
+        <form
+          role="search"
+          method="get"
+          class="header__search-form"
+          action="#"
+          v-on:submit.prevent="search"
+        >
+          <label>
+            <span class="hide-content">Search for:</span>
+            <input
+              type="search"
+              class="header__search-field"
+              v-model="title"
+              name="s"
+              title="Search for:"
+              autocomplete="off"
+            />
+          </label>
+          <input type="submit" class="header__search-submit" value="Search" />
+        </form>
+        <a href="#0" title="Close Search" class="header__search-close">Close</a>
+      </div>
+      <!-- end header__search -->
 
-            <div class="header__search">
+      <!-- toggles -->
+      <a href="#0" class="header__search-trigger"></a>
+      <a href="#0" class="header__menu-toggle"><span>Menu</span></a>
+    </div>
+    <!-- end header__top -->
 
-                <form role="search" method="get" class="header__search-form" action="#">
-                    <label>
-                        <span class="hide-content">Search for:</span>
-                        <input type="search" class="header__search-field" placeholder="Type Keywords" value="" name="s"
-                            title="Search for:" autocomplete="off">
-                    </label>
-                    <input type="submit" class="header__search-submit" value="Search">
-                </form>
+    <nav class="header__nav-wrap">
+      <ul class="header__nav">
+        <li class="current">
+          <router-link to="/">Home</router-link>
+        </li>
 
-                <a href="#0" title="Close Search" class="header__search-close">Close</a>
+        <li class="has-children">
+          <a href="#0" title="">Categories</a>
+          <ul class="sub-menu">
+            <li v-for="category in categories" :key="category.code">
+              <a href="single-video.html">{{ category.name }}</a>
+              <!-- <router-link :to="'/category/' + category.code">{{ category.name }}</router-link> -->
+            </li>
+          </ul>
+        </li>
 
-            </div> <!-- end header__search -->
+        <li class="has-children">
+          <a href="#0" title="">Blog Posts</a>
+          <ul class="sub-menu">
+            <li><a href="single-video.html">Video Post</a></li>
+            <li><a href="single-audio.html">Audio Post</a></li>
+            <li><a href="single-gallery.html">Gallery Post</a></li>
+            <li><a href="single-standard.html">Standard Post</a></li>
+          </ul>
+        </li>
+        <li><a href="styles.html" title="">Styles</a></li>
+        <li><a href="page-about.html" title="">About</a></li>
+        <li><a href="page-contact.html" title="">Contact</a></li>
+        <li v-if="!auth"><router-link to="/login">Login</router-link></li>
+        <li v-if="!auth"><router-link to="/register">Register</router-link></li>
 
-            <!-- toggles -->
-            <a href="#0" class="header__search-trigger"></a>
-            <a href="#0" class="header__menu-toggle"><span>Menu</span></a>
+        <li
+          :style="{ visibility: visibility }"
+          id="manage"
+          class="has-children"
+        >
+          <a href="#0" title="">Manage</a>
+          <ul class="sub-menu">
+            <li><router-link to="/create">Create Post</router-link></li>
+            <li><router-link to="/">Manage</router-link></li>
+          </ul>
+        </li>
 
-        </div> <!-- end header__top -->
+        <li v-if="auth"><router-link to="/profile">Profile</router-link></li>
+        <li v-if="auth">
+          <router-link to="/" @click="logout">Logout</router-link>
+        </li>
+      </ul>
+      <!-- end header__nav -->
 
-        <nav class="header__nav-wrap">
-
-            <ul class="header__nav">
-                <li class="current">
-                    <router-link to="/">Home</router-link>
-                </li>
-
-                <li class="has-children">
-                    <a href="#0" title="">Categories</a>
-                    <ul class="sub-menu">
-                        <li v-for="category in categories" :key="category.code">
-                            <a href="single-video.html">{{ category.name }}</a>
-                            <!-- <router-link :to="'/category/' + category.code">{{ category.name }}</router-link> -->
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="has-children">
-                    <a href="#0" title="">Blog Posts</a>
-                    <ul class="sub-menu">
-                        <li><a href="single-video.html">Video Post</a></li>
-                        <li><a href="single-audio.html">Audio Post</a></li>
-                        <li><a href="single-gallery.html">Gallery Post</a></li>
-                        <li><a href="single-standard.html">Standard Post</a></li>
-                    </ul>
-                </li>
-                <li><a href="styles.html" title="">Styles</a></li>
-                <li><a href="page-about.html" title="">About</a></li>
-                <li><a href="page-contact.html" title="">Contact</a></li>
-                <li v-if="!auth"><router-link to="/login">Login</router-link></li>
-                <li v-if="!auth"><router-link to="/register">Register</router-link></li>
-
-                <li :style="{ visibility: visibility }" id="manage" class="has-children">
-                    <a href="#0" title="">Manage</a>
-                    <ul class="sub-menu">
-                        <li><router-link to="/create">Create Post</router-link></li>
-                        <li><router-link to="/">Manage</router-link></li>
-                    </ul>
-                </li>
-
-                <li v-if="auth"><router-link to="/profile">Profile</router-link></li>
-                <li v-if="auth"><router-link to="/" @click="logout">Logout</router-link></li>
-            </ul> <!-- end header__nav -->
-
-            <ul class="header__social">
-                <li class="ss-facebook">
-                    <a href="https://facebook.com/">
-                        <span class="screen-reader-text">Facebook</span>
-                    </a>
-                </li>
-                <li class="ss-twitter">
-                    <a href="#0">
-                        <span class="screen-reader-text">Twitter</span>
-                    </a>
-                </li>
-                <li class="ss-dribbble">
-                    <a href="#0">
-                        <span class="screen-reader-text">Dribbble</span>
-                    </a>
-                </li>
-                <li class="ss-pinterest">
-                    <a href="#0">
-                        <span class="screen-reader-text">Behance</span>
-                    </a>
-                </li>
-            </ul>
-
-        </nav> <!-- end header__nav-wrap -->
-
-    </header> <!-- end s-header -->
+      <ul class="header__social">
+        <li class="ss-facebook">
+          <a href="https://facebook.com/">
+            <span class="screen-reader-text">Facebook</span>
+          </a>
+        </li>
+        <li class="ss-twitter">
+          <a href="#0">
+            <span class="screen-reader-text">Twitter</span>
+          </a>
+        </li>
+        <li class="ss-dribbble">
+          <a href="#0">
+            <span class="screen-reader-text">Dribbble</span>
+          </a>
+        </li>
+        <li class="ss-pinterest">
+          <a href="#0">
+            <span class="screen-reader-text">Behance</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- end header__nav-wrap -->
+  </header>
+  <!-- end s-header -->
 </template>
 
 <script>
-import axios from 'axios';
-import { computed } from 'vue';
-import { useStore } from 'vuex';
+import axios from "axios";
+import { computed } from "vue";
+import { mapActions, useStore } from "vuex";
+import store from '@/store';
 export default {
-    name: 'Header',
-    data() {
-        return {
-            categories: []
-        }
+  name: "Header",
+  data() {
+    return {
+      categories: [],
+      table_data: [],
+      title: "",
+    };
+  },
+  created() {
+    axios
+      .get("https://localhost:7185/api/Category")
+      .then((response) => {
+        this.categories = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+  mounted() {
+    let recaptchaScript = document.createElement("script");
+    recaptchaScript.setAttribute("src", "./js/main.js");
+    document.head.appendChild(recaptchaScript);
+  },
+  methods: {
+    search(){
+      axios.get(`https://localhost:7185/api/Article/search/${this.title}`)
+      .then((res) => {
+        this.table_data = res.data.data;
+        store.commit('setTableData', this.table_data);
+      })
     },
-    created() {
-        axios.get('https://localhost:7185/api/Category')
-            .then(response => {
-                this.categories = response.data;
-            })
-            .catch(error => {
-                console.log(error);
-            });
+    ...mapActions({
+      setTableData: 'setTableData'
+    })
+  },
+  setup() {
+    const store = useStore();
+    const auth = computed(() => store.state.authenticated);
+    const logout = async () => {
+      sessionStorage.removeItem("JWT");
+      store.dispatch("setAuth", false);
+    };
+    return {
+      auth,
+      logout,
+    };
+  },
+  computed: {
+    visibility() {
+      return this.auth ? "visible" : "hidden";
     },
-    mounted() {
-        let recaptchaScript = document.createElement('script')
-        recaptchaScript.setAttribute('src', './js/main.js')
-        document.head.appendChild(recaptchaScript)
-    },
-    setup() {
-        const store = useStore();
-        const auth = computed(() => store.state.authenticated)
-        const logout = async () => {
-            sessionStorage.removeItem("JWT");
-            store.dispatch('setAuth', false);
-        }
-        return {
-            auth,
-            logout
-        }
-    },
-    computed: {
-        visibility() {
-            return this.auth ? 'visible' : 'hidden';
-        }
-    },
-}
+  },
+};
 </script>
+
+<style>
+    input[type="search" i] {
+        padding: 0px;
+    }
+    
+    input#search{
+        width: 300px;
+        height: 27px;
+        margin-bottom: 0px;
+        font-size: 1rem;
+        color: #262626;
+        border: none;
+        padding: 5px;
+        background-color: white !important;
+    
+        -webkit-transition: width .55s ease;
+        -moz-transition: width .55s ease;
+        -ms-transition: width .55s ease;
+        -o-transition: width .55s ease;
+        transition: width .55s ease;
+    }
+    
+    input#search:focus, .kt-header__topbar-item:hover input#search{
+        outline:none;
+        width: 300px;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        border-bottom: 1px solid #93a2ad;
+    }
+
+    .result-search-box{
+        display: none;
+        width: 300px;
+        padding: 0px 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .kt-header__topbar-item:focus-within .result-search-box{
+        display: block;
+    }
+    .result-search-box:active{
+        display: block;
+    }
+    #fast-search .kt-quick-search__result .kt-quick-search__section{
+        margin-bottom: 0px;
+    }
+    #fast-search .kt-quick-search__result .kt-quick-search__item .kt-quick-search__item-icon{
+        background-color: #f8f9fa;
+        
+    }
+</style>
