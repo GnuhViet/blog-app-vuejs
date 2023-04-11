@@ -5,6 +5,7 @@ export default createStore({
     authenticated: false,
     tableData: null,
     categoryId: null,
+    id: null,
   },
   getters: {
     getTableData(state) {
@@ -12,6 +13,9 @@ export default createStore({
     },
     getCategoryId(state){
       return state.categoryId;
+    },
+    getIdArticle(state){
+      return state.id;
     }
   },
   mutations: {
@@ -21,6 +25,9 @@ export default createStore({
     },
     setCategoryId(state,data){
       state.categoryId = data;
+    },
+    setIdArticle(state,data){
+      state.id = data;
     }
   },
   actions: {

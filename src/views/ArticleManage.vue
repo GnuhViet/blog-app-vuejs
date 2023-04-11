@@ -13,13 +13,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(item, index) in displayedItems" :key="index">
+                        <tr v-for="(item, index) in displayedItems" :key="index.id">
                             <td>{{ item.title }}</td>
                             <td>{{ item.formattedCreateDate }}</td>
                             <td>{{ item.shortDescription }}</td>
                             <td>
-                                <a class="btn" href="#0">Edit</a>
-                                <a class="btn btn--primary" href="#0">Delete</a>
+                                <button v-on:click="transferTitle(item.id)" class="btn">
+                                    <router-link :to="'/edit/' + item.id">Edit</router-link>
+                                </button>
+                                <button class="btn btn--primary">Delete</button>
                             </td>
                         </tr>
                     </tbody>
@@ -50,7 +52,8 @@
     
 <script>
 import axios from "axios";
-import { useStore } from "vuex";
+import { mapActions, useStore } from "vuex";
+import store from '@/store';
 export default {
     name: "Manage",
     data() {
@@ -117,6 +120,12 @@ export default {
                     this.loading = false;
                 });
         },
+        transferTitle(item){
+            store.commit('setIdArticle', item);
+        },
+        ...mapActions({
+            setIdArticle: 'setIdArticle',
+        }),
         changePage(pageNumber) {
             this.currentPage = pageNumber;
         },
