@@ -11,12 +11,7 @@
       </div>
 
       <div class="header__search">
-        <form
-          role="search"
-          method="get"
-          class="header__search-form"
-          action="#"
-        >
+        <form role="search" method="get" class="header__search-form" action="#">
           <label>
             <span class="hide-content">Search for:</span>
             <input
@@ -59,11 +54,7 @@
         <li v-if="!auth"><router-link to="/login">Login</router-link></li>
         <li v-if="!auth"><router-link to="/register">Register</router-link></li>
 
-        <li
-          :style="{ visibility: visibility }"
-          id="manage"
-          class="has-children"
-        >
+        <li :style="{ visibility: visibility }" id="manage" class="has-children">
           <a href="#0" title="">Manage</a>
           <ul class="sub-menu">
             <li><router-link to="/create">Create Post</router-link></li>
@@ -107,23 +98,23 @@
 </template>
 
 <script>
-import axios from "axios";
-import { computed } from "vue";
-import { mapActions, useStore } from "vuex";
+import axios from 'axios';
+import { computed } from 'vue';
+import { mapActions, useStore } from 'vuex';
 import store from '@/store';
 export default {
-  name: "Header",
+  name: 'Header',
   data() {
     return {
       categories: [],
       table_data: [],
-      title: "",
-      selectedCategory: "",
+      title: '',
+      selectedCategory: '',
     };
   },
   created() {
     axios
-      .get("https://localhost:7185/api/Category")
+      .get('https://localhost:7185/api/Category')
       .then((response) => {
         this.categories = response.data;
         console.log(this.categories);
@@ -133,41 +124,39 @@ export default {
       });
   },
   mounted() {
-    let recaptchaScript = document.createElement("script");
-    recaptchaScript.setAttribute("src", "./js/main.js");
+    let recaptchaScript = document.createElement('script');
+    recaptchaScript.setAttribute('src', './js/main.js');
     document.head.appendChild(recaptchaScript);
   },
   methods: {
-    search(){
-      if(this.title.trim() != ""){
-        axios.get(`https://localhost:7185/api/Article/search/${this.title}`)
-        .then((res) => {
+    search() {
+      if (this.title.trim() != '') {
+        axios.get(`https://localhost:7185/api/Article/search/${this.title}`).then((res) => {
           this.table_data = res.data.data;
           store.commit('setTableData', this.table_data);
-        })
-      }
-      else{
+        });
+      } else {
         store.commit('setTableData', '');
       }
     },
-    searchByCategory(category){
+    searchByCategory(category) {
       this.selectedCategory = category;
       store.commit('setCategoryId', this.selectedCategory);
     },
-    reloadPage(){
+    reloadPage() {
       location.reload();
     },
     ...mapActions({
       setTableData: 'setTableData',
-      setCategoryId: 'setCategoryId'
+      setCategoryId: 'setCategoryId',
     }),
   },
   setup() {
     const store = useStore();
     const auth = computed(() => store.state.authenticated);
     const logout = async () => {
-      sessionStorage.removeItem("JWT");
-      store.dispatch("setAuth", false);
+      sessionStorage.removeItem('JWT');
+      store.dispatch('setAuth', false);
     };
     return {
       auth,
@@ -176,61 +165,61 @@ export default {
   },
   computed: {
     visibility() {
-      return this.auth ? "visible" : "hidden";
+      return this.auth ? 'visible' : 'hidden';
     },
   },
 };
 </script>
 
 <style>
-    input[type="search" i] {
-        padding: 0px;
-    }
-    
-    input#search{
-        width: 300px;
-        height: 27px;
-        margin-bottom: 0px;
-        font-size: 1rem;
-        color: #262626;
-        border: none;
-        padding: 5px;
-        background-color: white !important;
-    
-        -webkit-transition: width .55s ease;
-        -moz-transition: width .55s ease;
-        -ms-transition: width .55s ease;
-        -o-transition: width .55s ease;
-        transition: width .55s ease;
-    }
-    
-    input#search:focus, .kt-header__topbar-item:hover input#search{
-        outline:none;
-        width: 300px;
-        border-top: none;
-        border-left: none;
-        border-right: none;
-        border-bottom: 1px solid #93a2ad;
-    }
+input[type='search' i] {
+  padding: 0px;
+}
 
-    .result-search-box{
-        display: none;
-        width: 300px;
-        padding: 0px 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    }
+input#search {
+  width: 300px;
+  height: 27px;
+  margin-bottom: 0px;
+  font-size: 1rem;
+  color: #262626;
+  border: none;
+  padding: 5px;
+  background-color: white !important;
 
-    .kt-header__topbar-item:focus-within .result-search-box{
-        display: block;
-    }
-    .result-search-box:active{
-        display: block;
-    }
-    #fast-search .kt-quick-search__result .kt-quick-search__section{
-        margin-bottom: 0px;
-    }
-    #fast-search .kt-quick-search__result .kt-quick-search__item .kt-quick-search__item-icon{
-        background-color: #f8f9fa;
-        
-    }
+  -webkit-transition: width 0.55s ease;
+  -moz-transition: width 0.55s ease;
+  -ms-transition: width 0.55s ease;
+  -o-transition: width 0.55s ease;
+  transition: width 0.55s ease;
+}
+
+input#search:focus,
+.kt-header__topbar-item:hover input#search {
+  outline: none;
+  width: 300px;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid #93a2ad;
+}
+
+.result-search-box {
+  display: none;
+  width: 300px;
+  padding: 0px 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.kt-header__topbar-item:focus-within .result-search-box {
+  display: block;
+}
+.result-search-box:active {
+  display: block;
+}
+#fast-search .kt-quick-search__result .kt-quick-search__section {
+  margin-bottom: 0px;
+}
+#fast-search .kt-quick-search__result .kt-quick-search__item .kt-quick-search__item-icon {
+  background-color: #f8f9fa;
+}
 </style>
