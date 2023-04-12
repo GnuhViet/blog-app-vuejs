@@ -4,10 +4,14 @@
     <div v-else class="masonry-wrap">
       <div class="masonry">
         <div class="grid-sizer"></div>
-        <article class="masonry__brick entry format-standard" v-for="(item, index) in articles" :key="index">
+        <article
+          class="masonry__brick entry format-standard"
+          v-for="(item, index) in articles"
+          :key="index"
+        >
           <div class="entry__thumb">
             <a href="single-standard.html" class="entry__thumb-link">
-              <img :src="item.thumbnail" alt="">
+              <img :src="item.thumbnail" alt="" />
             </a>
           </div>
           <div class="entry__text">
@@ -17,8 +21,12 @@
               </h2>
               <div class="entry__meta">
                 <span class="entry__meta-cat">
-                  <a v-for="category in item.categories" :key="category.id" :href="'category.html?id=' + category.id">{{
-                    category.name }}</a>
+                  <a
+                    v-for="category in item.categories"
+                    :key="category.id"
+                    :href="'category.html?id=' + category.id"
+                    >{{ category.name }}</a
+                  >
                 </span>
                 <span class="entry__meta-date">
                   <p>{{ item.formattedCreateDate }}</p>
@@ -44,8 +52,7 @@
                 <span>&laquo;</span>
               </a>
             </li>
-            <li v-for="page in pages" :key="page"
-                :class="{ active: page === pageNumber }">
+            <li v-for="page in pages" :key="page" :class="{ active: page === pageNumber }">
               <a class="pgn__num" href="#" @click.prevent="testApi(page)">{{ page }}</a>
             </li>
             <li :class="{ disabled: !hasNextPage }">
@@ -61,19 +68,19 @@
 </template>
 
 <script>
-import axios from "axios";
-import { mapGetters, useStore } from "vuex";
-import router from "@/router";
-import Pagination from 'vue-pagination-2';
+import axios from 'axios';
+import { mapGetters, useStore } from 'vuex';
+import router from '@/router';
+// import Pagination from 'vue-pagination-2';
 export default {
-  name: "Master",
+  name: 'Master',
   components: {
-    Pagination,
+    // Pagination,
   },
   data() {
     return {
       table_data: [],
-      category_id: "",
+      category_id: '',
       pageNumber: 1,
       pageSize: 9,
       totalPages: 1,
@@ -104,38 +111,36 @@ export default {
     ...mapGetters({
       tableData: 'getTableData',
       categoryId: 'getCategoryId',
-    })
+    }),
   },
   watch: {
     tableData(newValue) {
-      if(newValue != ""){
+      if (newValue != '') {
         this.table_data = newValue;
-      }
-      else{
+      } else {
         this.testApi();
       }
     },
     categoryId(newValue) {
       this.category_id = newValue;
-      axios.get(`https://localhost:7185/api/Article/category/${this.category_id}`)
-      .then((res) => {
+      axios.get(`https://localhost:7185/api/Article/category/${this.category_id}`).then((res) => {
         let resc = res.data;
         this.table_data = resc.data;
-        this.totalPages = this.table_data.totalPages
+        this.totalPages = this.table_data.totalPages;
         this.loading = false;
-      })
-    }
+      });
+    },
   },
 
   mounted() {
     const store = useStore();
-    let jwt = sessionStorage.getItem("JWT");
+    let jwt = sessionStorage.getItem('JWT');
     if (jwt != null) {
-      store.dispatch("setAuth", true);
+      store.dispatch('setAuth', true);
     } else {
       //nếu chưa đăng nhập thì trả về trang login
-      store.dispatch("setAuth", false);
-    };
+      store.dispatch('setAuth', false);
+    }
     // Load trang đầu tiên khi component được render
     this.testApi(this.pageNumber);
   },
@@ -143,7 +148,9 @@ export default {
   methods: {
     testApi(pageNumber) {
       axios
-        .get(`https://localhost:7185/api/Article?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
+        .get(
+          `https://localhost:7185/api/Article?pageNumber=${pageNumber}&pageSize=${this.pageSize}`,
+        )
         .then((res) => {
           let table_data = res.data;
           this.pageNumber = table_data.pageNumber;
