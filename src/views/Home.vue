@@ -4,7 +4,7 @@
     <div v-else class="masonry-wrap">
       <div class="masonry">
         <div class="grid-sizer"></div>
-        <article class="masonry__brick entry format-standard" v-for="(item, index) in displayedItems" :key="index">
+        <article class="masonry__brick entry format-standard" v-for="(item, index) in articles" :key="index">
           <div class="entry__thumb">
             <a href="single-standard.html" class="entry__thumb-link">
               <img :src="item.thumbnail" alt="">
@@ -37,18 +37,24 @@
   <div class="row">
     <div class="column large-full">
       <nav class="pgn">
-        <ul>
-          <li v-if="currentPage > 1">
-            <a class="pgn__prev" href="#0" @click="prevPage">Prev</a>
-          </li>
-          <li v-for="pageNumber in pages" :key="pageNumber">
-            <a v-if="pageNumber === currentPage" class="pgn__num current"> {{ pageNumber }}</a>
-            <a v-else class="pgn__num" href="#0" @click="changePage(pageNumber)">{{ pageNumber }}</a>
-          </li>
-          <li v-if="currentPage < totalPages">
-            <a class="pgn__next" href="#0" @click="nextPage">Next</a>
-          </li>
-        </ul>
+        <div v-if="totalPages > 1">
+          <ul class="pagination">
+            <li :class="{ disabled: !hasPreviousPage }">
+              <a class="pgn__prev" href="#" @click.prevent="testApi(pageNumber - 1)">
+                <span>&laquo;</span>
+              </a>
+            </li>
+            <li v-for="page in pages" :key="page"
+                :class="{ active: page === pageNumber }">
+              <a class="pgn__num" href="#" @click.prevent="testApi(page)">{{ page }}</a>
+            </li>
+            <li :class="{ disabled: !hasNextPage }">
+              <a class="pgn__next" href="#" @click.prevent="testApi(pageNumber + 1)">
+                <span>&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </div>
       </nav>
     </div>
   </div>
@@ -58,36 +64,42 @@
 import axios from "axios";
 import { mapGetters, useStore } from "vuex";
 import router from "@/router";
+import Pagination from 'vue-pagination-2';
 export default {
   name: "Master",
-  components: {},
+  components: {
+    Pagination,
+  },
   data() {
     return {
       table_data: [],
       category_id: "",
-      currentPage: 1,
-      itemsPerPage: 9,
+      pageNumber: 1,
+      pageSize: 9,
+      totalPages: 1,
+      totalRecords: 0,
+      nextPage: null,
+      previousPage: null,
+      articles: [],
       loading: true,
     };
   },
   created() {
-    this.testApi();
+    this.testApi(this.pageNumber);
   },
   computed: {
-    totalPages() {
-      return Math.ceil(this.table_data.length / this.itemsPerPage);
+    hasPreviousPage() {
+      return this.previousPage !== null;
+    },
+    hasNextPage() {
+      return this.nextPage !== null;
     },
     pages() {
-      const pagesArray = [];
+      const pages = [];
       for (let i = 1; i <= this.totalPages; i++) {
-        pagesArray.push(i);
+        pages.push(i);
       }
-      return pagesArray;
-    },
-    displayedItems() {
-      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-      const endIndex = startIndex + this.itemsPerPage;
-      return this.table_data.slice(startIndex, endIndex);
+      return pages;
     },
     ...mapGetters({
       tableData: 'getTableData',
@@ -107,9 +119,9 @@ export default {
       this.category_id = newValue;
       axios.get(`https://localhost:7185/api/Article/category/${this.category_id}`)
       .then((res) => {
-        console.log(res.data);
         let resc = res.data;
         this.table_data = resc.data;
+        this.totalPages = this.table_data.totalPages
         this.loading = false;
       })
     }
@@ -123,17 +135,23 @@ export default {
     } else {
       //nếu chưa đăng nhập thì trả về trang login
       store.dispatch("setAuth", false);
-    }
+    };
+    // Load trang đầu tiên khi component được render
+    this.testApi(this.pageNumber);
   },
 
   methods: {
-    testApi() {
+    testApi(pageNumber) {
       axios
-        .get("https://localhost:7185/api/Article")
+        .get(`https://localhost:7185/api/Article?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
         .then((res) => {
-          console.log(res.data);
-          let resc = res.data;
-          this.table_data = resc.data;
+          let table_data = res.data;
+          this.pageNumber = table_data.pageNumber;
+          this.totalPages = table_data.totalPages;
+          this.totalRecords = table_data.totalRecords;
+          this.nextPage = table_data.nextPage;
+          this.previousPage = table_data.previousPage;
+          this.articles = table_data.data;
           this.loading = false;
         })
         .catch((error) => {
@@ -141,14 +159,8 @@ export default {
           this.loading = false;
         });
     },
-    changePage(pageNumber) {
-      this.currentPage = pageNumber;
-    },
-    nextPage() {
-      this.currentPage++;
-    },
-    prevPage() {
-      this.currentPage--;
+    setPage(page) {
+      this.currentPage = page;
     },
   },
 };

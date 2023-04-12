@@ -43,7 +43,7 @@
     <nav class="header__nav-wrap">
       <ul class="header__nav">
         <li class="current">
-          <router-link to="/">Home</router-link>
+          <router-link @click="reloadPage" to="/">Home</router-link>
         </li>
 
         <li class="has-children">
@@ -153,6 +153,9 @@ export default {
     searchByCategory(category){
       this.selectedCategory = category;
       store.commit('setCategoryId', this.selectedCategory);
+    },
+    reloadPage(){
+      location.reload();
     },
     ...mapActions({
       setTableData: 'setTableData',

@@ -119,6 +119,7 @@ export default {
                 if(res.status == 200){
                     alert("Create Success!!");
                 }
+                location.reload();
             })
             .catch(error => {
                 console.log(error);
