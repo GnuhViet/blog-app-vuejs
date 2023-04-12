@@ -1,5 +1,5 @@
 <template>
-    <h3 class="h2">Post New Article</h3>
+    <h3 class="h2">Update Article</h3>
 
     <form name="contactForm" id="contactForm" method="post" action="" autocomplete="off">
         <fieldset>
@@ -7,10 +7,10 @@
                 <div class="categories-container">
                     <div v-for="category in categories" :key="category.id" class="category">
                         <label :for="'category-' + category.id">
-                            <input type="checkbox" :id="'category-' + category.id" :value="category.id"
-                                v-model="inputData.categoryIds">
-                            {{ category.name }}
-                        </label>
+                        <input type="checkbox" :id="'category-' + category.id" :value="category.id" 
+                            v-model="inputData.categoryIds">
+                        {{ category.name }}
+                    </label>
                     </div>
                 </div>
             </div>
@@ -55,7 +55,7 @@
                 content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
             }" />
 
-            <input @click.prevent="submitForm()" name="submit" id="submit" class="btn btn--primary btn-wide btn--large full-width" value="Create Post"
+            <input @click.prevent="updateForm()" name="submit" id="submit" class="btn btn--primary btn-wide btn--large full-width" value="Update Post"
                 type="submit">
 
         </fieldset>
@@ -65,7 +65,7 @@
 <script>
 import axios from 'axios';
 import Editor from '@tinymce/tinymce-vue';
-import { useStore } from 'vuex';
+import { mapGetters, useStore } from 'vuex';
 export default {
     name: 'CreateArticle',
     components: {
@@ -82,9 +82,9 @@ export default {
                 content: "",
             },
             categories: [],
-            filterData:{
-
-            }
+            categoriesChecked: [],
+            articleData: [],
+            articleId: "",
         };
     },
     mounted() {
@@ -96,6 +96,33 @@ export default {
         };
         this.whenMounted();
     },
+    computed: {
+        ...mapGetters({
+            idArticle: 'getIdArticle',
+        })
+    },
+    watch: {
+        idArticle(newValue){
+            this.articleId = newValue;
+            axios.get(`https://localhost:7185/api/Article/${this.articleId}`)
+                .then((res) => {
+                    const articleData = res.data;
+                    this.inputData.id = articleData.id;
+                    this.inputData.title = articleData.title;
+                    this.inputData.thumbnail = articleData.thumbnail;
+                    this.inputData.shortDescription = articleData.shortDescription;
+                    this.inputData.content = articleData.content;
+                    let categoryLength = articleData.categories;
+                    console.log(categoryLength);
+                    for(let i=0; i<categoryLength.length; i++){
+                        this.categoriesChecked = articleData.categories[i].id;
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        }
+    },
     methods: {
         whenMounted(){
             axios.get('https://localhost:7185/api/Category')
@@ -106,23 +133,20 @@ export default {
                     console.log(error);
                 });
         },
-        submitForm(){
+        updateForm(){
             var token = sessionStorage.getItem("JWT");
             const headers = {
                 'Authorization': "Bearer " + token,
             }
-            axios.post("https://localhost:7185/api/Article", this.inputData, {
+            axios.put(`https://localhost:7185/api/Article/${this.inputData.id}`, this.inputData, {
                 headers: headers,
             })
             .then((res) => {
-                console.log(res);
-                if(res.status == 200){
-                    alert("Create Success!!");
-                }
+                alert("Update success!!");
             })
-            .catch(error => {
-                console.log(error);
-            });
+            .catch((err) => {
+                console.log(err);
+            })
         }
     }
 }

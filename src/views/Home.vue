@@ -58,13 +58,13 @@
 import axios from "axios";
 import { mapGetters, useStore } from "vuex";
 import router from "@/router";
-import { onUpdated } from 'vue';
 export default {
   name: "Master",
   components: {},
   data() {
     return {
       table_data: [],
+      category_id: "",
       currentPage: 1,
       itemsPerPage: 9,
       loading: true,
@@ -91,13 +91,27 @@ export default {
     },
     ...mapGetters({
       tableData: 'getTableData',
+      categoryId: 'getCategoryId',
     })
   },
-
   watch: {
     tableData(newValue) {
-      this.table_data = newValue;
-      console.log(this.table_data);
+      if(newValue != ""){
+        this.table_data = newValue;
+      }
+      else{
+        this.testApi();
+      }
+    },
+    categoryId(newValue) {
+      this.category_id = newValue;
+      axios.get(`https://localhost:7185/api/Article/category/${this.category_id}`)
+      .then((res) => {
+        console.log(res.data);
+        let resc = res.data;
+        this.table_data = resc.data;
+        this.loading = false;
+      })
     }
   },
 
@@ -138,9 +152,6 @@ export default {
     },
   },
 };
-onUpdated(() => {
-  console.log(tableData);
-})
 </script>
 
 <style></style>
