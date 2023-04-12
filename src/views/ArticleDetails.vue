@@ -5,8 +5,7 @@
       <article class="column large-full entry format-standard">
         <div class="media-wrap entry__media">
           <div class="entry__post-thumb">
-            <img :src="article.thumbnail"
-              sizes="(max-width: 2000px) 100vw, 2000px" alt="">
+            <img :src="article.thumbnail" sizes="(max-width: 2000px) 100vw, 2000px" alt="">
           </div>
         </div>
 
@@ -19,48 +18,35 @@
             <li class="date">{{ article.formattedCreateDate }}</li>
             <li class="cat-links">
               <a v-for="category in article.categories" :key="category.id" :href="'category.html?id=' + category.id">{{
-                    category.name }}</a>
+                category.name }}</a>
             </li>
           </ul>
         </div>
         <div class="entry__content" v-html="article.content"></div>
       </article>
 
-      <div class="comments-wrap">
-
+      <div class="column large-full entry format-standard comments-wrap">
         <div id="comments" class="column large-12">
-
           <h3 class="h2">5 Comments</h3>
-
           <!-- START commentlist -->
           <ol class="commentlist">
-
-            <li class="depth-1 comment">
-
+            <li v-for="comment in comments" :key="comment.id" class="depth-1 comment">
               <div class="comment__avatar">
-                <img class="avatar" src="images/avatars/user-01.jpg" alt="" width="50" height="50">
+                <img class="avatar"
+                  :src="comment.authorAvatar ? 'https://localhost:7185' + comment.authorAvatar : (imagePreview ? imagePreview : 'https://cdn-icons-png.flaticon.com/512/149/149071.png')"
+                  alt="" width="50" height="50">
               </div>
-
               <div class="comment__content">
-
                 <div class="comment__info">
-                  <div class="comment__author">Itachi Uchiha</div>
-
+                  <div class="comment__author">{{ comment.authorFullName }}</div>
                   <div class="comment__meta">
-                    <div class="comment__time">April 30, 2019</div>
-
+                    <div class="comment__time">{{ comment.formattedCreateDate }}</div>
                   </div>
-                </div>
-
+                </div>  
                 <div class="comment__text">
-                  <p>Adhuc quaerendum est ne, vis ut harum tantas noluisse, id suas iisque mei. Nec te inani ponderum
-                    vulputate,
-                    facilisi expetenda has et. Iudico dictas scriptorem an vim, ei alia mentitum est, ne has voluptua
-                    praesent.</p>
+                  <p>{{ comment.content }}</p>
                 </div>
-
               </div>
-
             </li>
           </ol>
           <!-- END commentlist -->
@@ -68,33 +54,22 @@
         </div> <!-- end comments -->
 
         <div class="column large-12 comment-respond">
-
           <!-- START respond -->
           <div id="respond">
-
-            <h3 class="h2">Add Comment <span>Your email address will not be published</span></h3>
-
-            <form name="contactForm" id="contactForm" method="post" action="" autocomplete="off">
+            <form name="contactForm" id="contactForm" @submit.prevent="addComment" autocomplete="off">
               <fieldset>
-
                 <div class="message form-field">
                   <textarea name="cMessage" id="cMessage" class="full-width" placeholder="Your Message"></textarea>
                 </div>
-
                 <input name="submit" id="submit" class="btn btn--primary btn-wide btn--large full-width"
                   value="Add Comment" type="submit">
-
               </fieldset>
             </form> <!-- end form -->
-
           </div>
           <!-- END respond-->
-
         </div> <!-- end comment-respond -->
-
       </div> <!-- end comments-wrap -->
     </main>
-
   </div> <!-- end s-content -->
 </template>
 
@@ -107,6 +82,7 @@ export default {
   data() {
     return {
       article: {},
+      comments: []
     };
   },
   mounted() {
@@ -128,6 +104,39 @@ export default {
       .catch(error => {
         console.log(error);
       });
+
+    this.loadComments();
+  },
+  methods: {
+    loadComments() {
+      const articleId = this.$route.params.id;
+      axios.get(`https://localhost:7185/api/Comment/${articleId}`)
+        .then(response => {
+          this.comments = response.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    addComment(event) {
+      event.preventDefault();
+      const articleId = this.$route.params.id;
+      const formData = {
+        content: event.target.cMessage.value
+      };
+      var token = sessionStorage.getItem("JWT");
+      const headers = {
+        'Authorization': "Bearer " + token,
+      }
+      axios.post(`https://localhost:7185/api/Comment/${articleId}`, formData, { headers })
+        .then(response => {
+          this.commentContent = "";
+          this.loadComments();
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
   },
 };
 </script>
