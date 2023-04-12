@@ -107,7 +107,7 @@
   <!-- end s-content -->
 </template>
 
-<script lang="js">
+<script>
 import axios from 'axios';
 import { useStore } from 'vuex';
 import instance from '@/api/api';
@@ -152,7 +152,7 @@ export default {
         throw e;
       }
     },
-    async addComment(event: any) {
+    async addComment(event) {
       event.preventDefault();
       const articleId = this.$route.params.id;
 

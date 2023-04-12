@@ -71,12 +71,10 @@
 import axios from 'axios';
 import { mapGetters, useStore } from 'vuex';
 import router from '@/router';
-import Pagination from 'vue-pagination-2';
+
 export default {
   name: 'Master',
-  components: {
-    Pagination,
-  },
+
   data() {
     return {
       table_data: [],
