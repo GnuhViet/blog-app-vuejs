@@ -66,6 +66,8 @@
 import axios from 'axios';
 import Editor from '@tinymce/tinymce-vue';
 import { mapGetters, useStore } from 'vuex';
+import store from '@/store';
+import { useRouter } from 'vue-router';
 export default {
     name: 'CreateArticle',
     components: {
@@ -135,6 +137,7 @@ export default {
         },
         updateForm(){
             var token = sessionStorage.getItem("JWT");
+            const router = useRouter();
             const headers = {
                 'Authorization': "Bearer " + token,
             }
@@ -142,7 +145,10 @@ export default {
                 headers: headers,
             })
             .then((res) => {
-                alert("Update success!!");
+                if(res.status == 200){
+                    alert("Update success!!");
+                    this.$router.push('/manage');
+                }
             })
             .catch((err) => {
                 console.log(err);
