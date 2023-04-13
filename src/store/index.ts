@@ -1,4 +1,4 @@
-import { Commit, createStore } from 'vuex'
+import { Commit, createStore } from 'vuex';
 
 export default createStore({
   state: {
@@ -11,29 +11,27 @@ export default createStore({
     getTableData(state) {
       return state.tableData;
     },
-    getCategoryId(state){
+    getCategoryId(state) {
       return state.categoryId;
     },
-    getIdArticle(state){
+    getIdArticle(state) {
       return state.id;
-    }
+    },
   },
   mutations: {
-    SET_AUTH: (state: {authenticated: boolean}, auth:boolean) => state.authenticated = auth,
+    SET_AUTH: (state: { authenticated: boolean }, auth: boolean) => (state.authenticated = auth),
     setTableData(state, data) {
       state.tableData = data;
     },
-    setCategoryId(state,data){
+    setCategoryId(state, data) {
       state.categoryId = data;
     },
-    setIdArticle(state,data){
+    setIdArticle(state, data) {
       state.id = data;
-    }
+    },
   },
   actions: {
-    setAuth: ({commit}: {commit: Commit}, auth: boolean) => commit('SET_AUTH', auth),
-    
+    setAuth: ({ commit }: { commit: Commit }, auth: boolean) => commit('SET_AUTH', auth),
   },
-  modules: {
-  }
-})
+  modules: {},
+});
