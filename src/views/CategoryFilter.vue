@@ -116,7 +116,6 @@ export default {
   watch: {
     categoryId(newValue) {
       this.category_id = newValue;
-      console.log(this.category_id);
       this.categoryFilter(this.category_id, this.pageNumber);
     },
   },

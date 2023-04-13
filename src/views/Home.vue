@@ -48,15 +48,15 @@
         <div v-if="totalPages > 1">
           <ul class="pagination">
             <li :class="{ disabled: !hasPreviousPage }">
-              <a class="pgn__prev" href="#" @click.prevent="testApi(pageNumber - 1)">
+              <a class="pgn__prev" href="#" @click.prevent="testApi(this.titleName,pageNumber - 1)">
                 <span>&laquo;</span>
               </a>
             </li>
             <li v-for="page in pages" :key="page" :class="{ active: page === pageNumber }">
-              <a class="pgn__num" href="#" @click.prevent="testApi(page)">{{ page }}</a>
+              <a class="pgn__num" href="#" @click.prevent="testApi(this.titleName,page)">{{ page }}</a>
             </li>
             <li :class="{ disabled: !hasNextPage }">
-              <a class="pgn__next" href="#" @click.prevent="testApi(pageNumber + 1)">
+              <a class="pgn__next" href="#" @click.prevent="testApi(this.titleName,pageNumber + 1)">
                 <span>&raquo;</span>
               </a>
             </li>
@@ -88,11 +88,12 @@ export default {
       nextPage: null,
       previousPage: null,
       articles: [],
+      titleName: '',
       loading: true,
     };
   },
   created() {
-    this.testApi(this.pageNumber);
+    this.testApi(this.titleName,this.pageNumber);
   },
   computed: {
     hasPreviousPage() {
@@ -116,9 +117,10 @@ export default {
   watch: {
     tableData(newValue) {
       if (newValue != '') {
-        this.table_data = newValue;
+        this.titleName = newValue;
+        this.testApi(this.titleName, this.pageNumber);
       } else {
-        this.testApi(this.pageNumber);
+        this.testApi(this.titleName,this.pageNumber);
       }
     },
   },
@@ -133,15 +135,13 @@ export default {
       store.dispatch('setAuth', false);
     }
     // Load trang đầu tiên khi component được render
-    this.testApi(this.pageNumber);
+    this.testApi(this.titleName,this.pageNumber);
   },
 
   methods: {
-    testApi(pageNumber) {
-      axios
-        .get(
-          `https://localhost:7185/api/Article?pageNumber=${pageNumber}&pageSize=${this.pageSize}`,
-        )
+    testApi(titleName,pageNumber) {
+      if(titleName == ''){
+        axios.get(`https://localhost:7185/api/Article?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
         .then((res) => {
           let table_data = res.data;
           this.pageNumber = table_data.pageNumber;
@@ -156,6 +156,25 @@ export default {
           console.log(error);
           this.loading = false;
         });
+      }
+      else{
+        axios.get(`https://localhost:7185/api/Article/search/${titleName}?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
+        .then((res) => {
+          let table_data = res.data;
+          this.pageNumber = table_data.pageNumber;
+          this.totalPages = table_data.totalPages;
+          this.totalRecords = table_data.totalRecords;
+          this.nextPage = table_data.nextPage;
+          this.previousPage = table_data.previousPage;
+          this.articles = table_data.data;
+          this.loading = false;
+        })
+        .catch((error) => {
+          console.log(error);
+          this.loading = false;
+        });
+      }
+      
     },
     setPage(page) {
       this.currentPage = page;
