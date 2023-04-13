@@ -13,15 +13,17 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in articles" :key="index.id">
+            <tr v-for="item in articles" :key="item.id">
               <td>{{ item.title }}</td>
               <td>{{ item.formattedCreateDate }}</td>
               <td>{{ item.shortDescription }}</td>
               <td>
-                <button v-on:click="transferTitle(item.id)" class="btn">
-                  <router-link :to="'/edit/' + item.id">Edit</router-link>
+                <router-link :to="'/edit/' + item.id">
+                  <button @click="transferItemId(item.id)" class="btn">Edit</button>
+                </router-link>
+                <button v-on:click="deleteItem(item.id)" class="btn btn--primary">
+                  Delete
                 </button>
-                <button v-on:click="deleteItem(item.id)" class="btn btn--primary">Delete</button>
               </td>
             </tr>
           </tbody>
@@ -41,7 +43,9 @@
               </a>
             </li>
             <li v-for="page in pages" :key="page" :class="{ active: page === pageNumber }">
-              <a class="pgn__num" href="#" @click.prevent="testApi(page)">{{ page }}</a>
+              <a class="pgn__num" href="#" @click.prevent="testApi(page)">{{
+                page
+              }}</a>
             </li>
             <li :class="{ disabled: !hasNextPage }">
               <a class="pgn__next" href="#" @click.prevent="testApi(pageNumber + 1)">
@@ -65,7 +69,7 @@ export default {
     return {
       table_data: [],
       pageNumber: 1,
-      pageSize: 9,
+      pageSize: 4,
       totalPages: 1,
       totalRecords: 0,
       nextPage: null,
@@ -137,8 +141,9 @@ export default {
           this.loading = false;
         });
     },
-    transferTitle(item) {
-      store.commit('setIdArticle', item);
+    transferItemId(item) {
+      console.log(item);
+      store.commit("setIdArticle", item);
     },
     deleteItem(item) {
       var token = sessionStorage.getItem('JWT');
@@ -152,8 +157,13 @@ export default {
         })
         .then((res) => {
           if (res.status == 200) {
-            alert('Delete Success!!');
-            this.testApi(this.pageNumber);
+            // Nếu dữ liệu bị xóa là dữ liệu cuối cùng của trang, trở lại trang trước đó
+            if (this.articles.length === 1 && this.pageNumber > 1) {
+              this.testApi(this.pageNumber - 1);
+            } else {
+              // Nếu không, load lại trang hiện tại
+              this.testApi(this.pageNumber);
+            }
           }
         });
     },

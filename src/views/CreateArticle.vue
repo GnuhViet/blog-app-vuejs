@@ -19,16 +19,10 @@
         </div>
       </div>
 
-      <div class="form-field">
-        <input
-          name="cTitle"
-          id="cTitle"
-          class="full-width"
-          placeholder="Title"
-          type="text"
-          v-model="inputData.title"
-        />
-      </div>
+            <div class="form-field">
+                <input name="cTitle" id="cTitle" class="full-width" placeholder="Title" type="text"
+                    v-model="inputData.title">
+            </div>
 
       <div class="form-field">
         <input
@@ -52,37 +46,34 @@
         />
       </div>
 
-      <editor
-        v-model="inputData.content"
-        api-key="dbg7svsu8ovrt7sgcc1su1vw1rdya8ygm0ll3im2av4185gi"
-        :init="{
-          height,
-          menubar,
-          plugins: [
-            'advlist',
-            'autolink',
-            'link',
-            'image',
-            'lists',
-            'charmap',
-            'preview',
-            'anchor',
-            'pagebreak',
-            'searchreplace',
-            'wordcount',
-            'visualblocks',
-            'visualchars',
-            'code',
-            'insertdatetime',
-            'media',
-            'table',
-            'emoticons',
-          ],
-          toolbar:
-            'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image preview emoticons',
-          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-        }"
-      />
+            <editor v-model="inputData.content" api-key="dbg7svsu8ovrt7sgcc1su1vw1rdya8ygm0ll3im2av4185gi" :init="{
+                height,
+                menubar,
+                plugins: [
+                    'advlist',
+                    'autolink',
+                    'link',
+                    'image',
+                    'lists',
+                    'charmap',
+                    'preview',
+                    'anchor',
+                    'pagebreak',
+                    'searchreplace',
+                    'wordcount',
+                    'visualblocks',
+                    'visualchars',
+                    'code',
+                    'insertdatetime',
+                    'media',
+                    'table',
+                    'emoticons',
+                    'fullscreen',
+                ],
+                toolbar:
+                    'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image preview emoticons | fullscreen',
+                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+            }" />
 
       <input
         @click.prevent="submitForm()"
@@ -102,66 +93,76 @@ import axios from 'axios';
 import Editor from '@tinymce/tinymce-vue';
 import { useStore } from 'vuex';
 export default {
-  name: 'CreateArticle',
-  components: {
-    editor: Editor,
-  },
-  data() {
-    return {
-      inputData: {
-        id: 0,
-        categoryIds: [],
-        title: '',
-        thumbnail: '',
-        shortDescription: '',
-        content: '',
-      },
-      categories: [],
-      filterData: {},
-    };
-  },
-  mounted() {
-    const store = useStore();
-    let jwt = sessionStorage.getItem('JWT');
-    console.log(jwt);
-    if (jwt != null) {
-      store.dispatch('setAuth', true);
+    name: 'CreateArticle',
+    components: {
+        'editor': Editor,
+    },
+    data() {
+        return {
+            inputData: {
+                id: 0,
+                categoryIds: [],
+                title: "",
+                thumbnail: "",
+                shortDescription: "",
+                content: "",
+            },
+            categories: [],
+            filterData: {
+
+            }
+        };
+    },
+    mounted() {
+        const store = useStore();
+        let jwt = sessionStorage.getItem("JWT");
+        console.log(jwt);
+        if (jwt != null) {
+            store.dispatch('setAuth', true);
+        };
+        this.whenMounted();
+    },
+    methods: {
+        whenMounted() {
+            axios.get('https://localhost:7185/api/Category')
+                .then(response => {
+                    this.categories = response.data;
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        },
+        submitForm() {
+            var token = sessionStorage.getItem("JWT");
+            const headers = {
+                'Authorization': "Bearer " + token,
+            }
+            // Check if any input fields are empty or null
+            if (this.inputData.categoryIds.length === 0 ||
+                !this.inputData.title ||
+                !this.inputData.thumbnail ||
+                !this.inputData.shortDescription ||
+                !this.inputData.content) {
+                alert("Vui lòng điền đầy đủ các trường");
+                return;
+            }
+
+            axios.post("https://localhost:7185/api/Article", this.inputData, {
+                headers: headers,
+            })
+                .then((res) => {
+                    console.log(res);
+                    if (res.status == 200) {
+                        alert("Create Success!!");
+                    }
+                    location.reload();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
     }
-    this.whenMounted();
-  },
-  methods: {
-    whenMounted() {
-      axios
-        .get('https://localhost:7185/api/Category')
-        .then((response) => {
-          this.categories = response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    submitForm() {
-      var token = sessionStorage.getItem('JWT');
-      const headers = {
-        Authorization: 'Bearer ' + token,
-      };
-      axios
-        .post('https://localhost:7185/api/Article', this.inputData, {
-          headers: headers,
-        })
-        .then((res) => {
-          console.log(res);
-          if (res.status == 200) {
-            alert('Create Success!!');
-          }
-          location.reload();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-  },
-};
+}
 </script>
 
 <style>

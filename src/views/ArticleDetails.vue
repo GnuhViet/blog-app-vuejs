@@ -32,7 +32,7 @@
 
       <div class="column large-full entry format-standard comments-wrap">
         <div id="comments" class="column large-12">
-          <h3 class="h2">5 Comments</h3>
+          <h3 class="h2">{{ comments.length + " Comments"|| "0 Comments"}}</h3>
           <!-- START commentlist -->
           <ol class="commentlist">
             <li v-for="comment in comments" :key="comment.id" class="depth-1 comment">
@@ -71,6 +71,7 @@
         <div class="column large-12 comment-respond">
           <!-- START respond -->
           <div id="respond">
+            <h3 class="h2">Add new comment</h3>
             <form
               name="contactForm"
               id="contactForm"
@@ -183,4 +184,9 @@ export default {
 #main_content {
   padding-left: 110px !important;
 }
+
+p, h2, h3, h4, h5, h6, ul, li {
+  background-color: transparent !important;
+}
+
 </style>

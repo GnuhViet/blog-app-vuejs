@@ -1,23 +1,18 @@
 <template>
   <h3 class="h2">Update Article</h3>
 
-  <form name="contactForm" id="contactForm" method="post" action="" autocomplete="off">
-    <fieldset>
-      <div class="form-field">
-        <div class="categories-container">
-          <div v-for="category in categories" :key="category.id" class="category">
-            <label :for="'category-' + category.id">
-              <input
-                type="checkbox"
-                :id="'category-' + category.id"
-                :value="category.id"
-                v-model="inputData.categoryIds"
-              />
-              {{ category.name }}
-            </label>
-          </div>
-        </div>
-      </div>
+    <form name="contactForm" id="contactForm" method="post" action="" autocomplete="off">
+        <fieldset>
+            <div class="form-field">
+                <div class="categories-container">
+                    <div v-for="category in categories" :key="category.id" class="category">
+                        <label :for="'category-' + category.id">
+                            <input type="checkbox" :id="'category-' + category.id" :value="category.id" v-model="inputData.categoryIds">
+                            {{ category.name }}
+                        </label>
+                    </div>
+                </div>
+            </div>
 
       <div class="form-field">
         <input
@@ -52,37 +47,34 @@
         />
       </div>
 
-      <editor
-        v-model="inputData.content"
-        api-key="dbg7svsu8ovrt7sgcc1su1vw1rdya8ygm0ll3im2av4185gi"
-        :init="{
-          height,
-          menubar,
-          plugins: [
-            'advlist',
-            'autolink',
-            'link',
-            'image',
-            'lists',
-            'charmap',
-            'preview',
-            'anchor',
-            'pagebreak',
-            'searchreplace',
-            'wordcount',
-            'visualblocks',
-            'visualchars',
-            'code',
-            'insertdatetime',
-            'media',
-            'table',
-            'emoticons',
-          ],
-          toolbar:
-            'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image preview emoticons',
-          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-        }"
-      />
+            <editor v-model="inputData.content" api-key="dbg7svsu8ovrt7sgcc1su1vw1rdya8ygm0ll3im2av4185gi" :init="{
+                height,
+                menubar,
+                plugins: [
+                    'advlist',
+                    'autolink',
+                    'link',
+                    'image',
+                    'lists',
+                    'charmap',
+                    'preview',
+                    'anchor',
+                    'pagebreak',
+                    'searchreplace',
+                    'wordcount',
+                    'visualblocks',
+                    'visualchars',
+                    'code',
+                    'insertdatetime',
+                    'media',
+                    'table',
+                    'emoticons',
+                    'fullscreen',
+                ],
+                toolbar:
+                    'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image preview emoticons | fullscreen',
+                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+            }" />
 
       <input
         @click.prevent="updateForm()"
@@ -104,96 +96,92 @@ import { mapGetters, useStore } from 'vuex';
 import store from '@/store';
 import { useRouter } from 'vue-router';
 export default {
-  name: 'CreateArticle',
-  components: {
-    editor: Editor,
-  },
-  data() {
-    return {
-      inputData: {
-        id: 0,
-        categoryIds: [],
-        title: '',
-        thumbnail: '',
-        shortDescription: '',
-        content: '',
-      },
-      categories: [],
-      categoriesChecked: [],
-      articleData: [],
-      articleId: '',
-    };
-  },
-  mounted() {
-    const store = useStore();
-    let jwt = sessionStorage.getItem('JWT');
-    console.log(jwt);
-    if (jwt != null) {
-      store.dispatch('setAuth', true);
+    name: 'CreateArticle',
+    components: {
+        'editor': Editor,
+    },
+    data() {
+        return {
+            inputData: {
+                id: 0,
+                categoryIds: [],
+                title: "",
+                thumbnail: "",
+                shortDescription: "",
+                content: "",
+            },
+            categories: [],
+            categoriesChecked: [],
+            articleData: [],
+            articleId: "",
+        };
+    },
+    mounted() {
+        const store = useStore();
+        let jwt = sessionStorage.getItem("JWT");
+        console.log(jwt);
+        if (jwt != null) {
+            store.dispatch('setAuth', true);
+        };
+        this.whenMounted();
+        this.getArticle();
+    },
+    computed: {
+        ...mapGetters({
+            idArticle: 'getIdArticle',
+        })
+    },
+    methods: {
+        whenMounted() {
+            axios.get('https://localhost:7185/api/Category')
+                .then(response => {
+                    this.categories = response.data;
+                })
+                .catch(error => {
+                    console.log(error); a
+                });
+        },
+        getArticle() {
+            const id = this.$route.params.id;
+            axios.get(`https://localhost:7185/api/Article/${id}`)
+                .then((res) => {
+                    const articleData = res.data;
+                    this.inputData.id = articleData.id;
+                    this.inputData.title = articleData.title;
+                    this.inputData.thumbnail = articleData.thumbnail;
+                    this.inputData.shortDescription = articleData.shortDescription;
+                    this.inputData.content = articleData.content;
+                    let categoryLength = articleData.categories;
+                    console.log(categoryLength);
+                    for (let i = 0; i < categoryLength.length; i++) {
+                        this.inputData.categoryIds.push(articleData.categories[i].id);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        },
+        updateForm() {
+            var token = sessionStorage.getItem("JWT");
+            const router = useRouter();
+            const headers = {
+                'Authorization': "Bearer " + token,
+            }
+            axios.put(`https://localhost:7185/api/Article/${this.inputData.id}`, this.inputData, {
+                headers: headers,
+            })
+                .then((res) => {
+                    if (res.status == 200) {
+                        alert("Update success!!");
+                        this.$router.push('/manage');
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        }
     }
-    this.whenMounted();
-  },
-  computed: {
-    ...mapGetters({
-      idArticle: 'getIdArticle',
-    }),
-  },
-  watch: {
-    idArticle(newValue) {
-      this.articleId = newValue;
-      axios
-        .get(`https://localhost:7185/api/Article/${this.articleId}`)
-        .then((res) => {
-          const articleData = res.data;
-          this.inputData.id = articleData.id;
-          this.inputData.title = articleData.title;
-          this.inputData.thumbnail = articleData.thumbnail;
-          this.inputData.shortDescription = articleData.shortDescription;
-          this.inputData.content = articleData.content;
-          let categoryLength = articleData.categories;
-          console.log(categoryLength);
-          for (let i = 0; i < categoryLength.length; i++) {
-            this.categoriesChecked = articleData.categories[i].id;
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-  },
-  methods: {
-    whenMounted() {
-      axios
-        .get('https://localhost:7185/api/Category')
-        .then((response) => {
-          this.categories = response.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    updateForm() {
-      var token = sessionStorage.getItem('JWT');
-      const router = useRouter();
-      const headers = {
-        Authorization: 'Bearer ' + token,
-      };
-      axios
-        .put(`https://localhost:7185/api/Article/${this.inputData.id}`, this.inputData, {
-          headers: headers,
-        })
-        .then((res) => {
-          if (res.status == 200) {
-            alert('Update success!!');
-            this.$router.push('/manage');
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-  },
-};
+}
 </script>
 
 <style>
