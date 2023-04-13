@@ -153,7 +153,7 @@ export default {
         .then((res) => {
           if (res.status == 200) {
             alert('Delete Success!!');
-            this.testApi();
+            this.testApi(this.pageNumber);
           }
         });
     },

@@ -166,12 +166,13 @@ export default {
       };
       axios
         .post(`https://localhost:7185/api/Comment/${articleId}`, formData, { headers })
-        .then((response) => {
+        .then((res) => {
           this.commentContent = '';
           this.loadComments();
         })
         .catch((error) => {
           console.log(error);
+          alert("Bạn phải đăng nhập để có thể bình luận!!")
         });
     },
   },

@@ -7,6 +7,7 @@ import CreateArticle from '../views/CreateArticle.vue';
 import ArticleDetails from '../views/ArticleDetails.vue';
 import ArticleManage from '../views/ArticleManage.vue';
 import ArticleEdit from '../views/ArticleEdit.vue';
+import CategoryFilter from '../views/CategoryFilter.vue';
 
 const routes: Array<RouteRecordRaw> = [
   { path: '/', component: Home },
@@ -24,6 +25,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/edit/:id',
     name: 'ArticleEdit',
     component: ArticleEdit,
+  },
+  {
+    path: '/category/:code',
+    name: 'CategoryFilter',
+    component: CategoryFilter,
   },
 ];
 
