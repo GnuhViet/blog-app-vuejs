@@ -21,12 +21,7 @@
                 <button v-on:click="transferTitle(item.id)" class="btn">
                   <router-link :to="'/edit/' + item.id">Edit</router-link>
                 </button>
-                <button
-                  v-on:click="deleteItem(item.id)"
-                  class="btn btn--primary"
-                >
-                  Delete
-                </button>
+                <button v-on:click="deleteItem(item.id)" class="btn btn--primary">Delete</button>
               </td>
             </tr>
           </tbody>
@@ -41,29 +36,15 @@
         <div v-if="totalPages > 1">
           <ul class="pagination">
             <li :class="{ disabled: !hasPreviousPage }">
-              <a
-                class="pgn__prev"
-                href="#"
-                @click.prevent="testApi(pageNumber - 1)"
-              >
+              <a class="pgn__prev" href="#" @click.prevent="testApi(pageNumber - 1)">
                 <span>&laquo;</span>
               </a>
             </li>
-            <li
-              v-for="page in pages"
-              :key="page"
-              :class="{ active: page === pageNumber }"
-            >
-              <a class="pgn__num" href="#" @click.prevent="testApi(page)">{{
-                page
-              }}</a>
+            <li v-for="page in pages" :key="page" :class="{ active: page === pageNumber }">
+              <a class="pgn__num" href="#" @click.prevent="testApi(page)">{{ page }}</a>
             </li>
             <li :class="{ disabled: !hasNextPage }">
-              <a
-                class="pgn__next"
-                href="#"
-                @click.prevent="testApi(pageNumber + 1)"
-              >
+              <a class="pgn__next" href="#" @click.prevent="testApi(pageNumber + 1)">
                 <span>&raquo;</span>
               </a>
             </li>
@@ -73,13 +54,13 @@
     </div>
   </div>
 </template>
-    
+
 <script>
-import axios from "axios";
-import { mapActions, useStore } from "vuex";
-import store from "@/store";
+import axios from 'axios';
+import { mapActions, useStore } from 'vuex';
+import store from '@/store';
 export default {
-  name: "Manage",
+  name: 'Manage',
   data() {
     return {
       table_data: [],
@@ -116,28 +97,30 @@ export default {
   },
   mounted() {
     const store = useStore();
-    let jwt = sessionStorage.getItem("JWT");
+    let jwt = sessionStorage.getItem('JWT');
     if (jwt != null) {
-      store.dispatch("setAuth", true);
+      store.dispatch('setAuth', true);
     } else {
       //nếu chưa đăng nhập thì trả về trang login
-      store.dispatch("setAuth", false);
-    };
+      store.dispatch('setAuth', false);
+    }
     // Load trang đầu tiên khi component được render
     this.testApi(this.pageNumber);
   },
   methods: {
     testApi(pageNumber) {
-      var token = sessionStorage.getItem("JWT");
+      var token = sessionStorage.getItem('JWT');
 
       const headers = {
-        Authorization: "Bearer " + token,
+        Authorization: 'Bearer ' + token,
       };
 
       axios
-        .get(`https://localhost:7185/api/Article/manage?pageNumber=${pageNumber}&pageSize=${this.pageSize}`,{
+        .get(
+          `https://localhost:7185/api/Article/manage?pageNumber=${pageNumber}&pageSize=${this.pageSize}`,
+          {
             headers: headers,
-          }
+          },
         )
         .then((res) => {
           let table_data = res.data;
@@ -155,13 +138,13 @@ export default {
         });
     },
     transferTitle(item) {
-      store.commit("setIdArticle", item);
+      store.commit('setIdArticle', item);
     },
     deleteItem(item) {
-      var token = sessionStorage.getItem("JWT");
+      var token = sessionStorage.getItem('JWT');
 
       const headers = {
-        Authorization: "Bearer " + token,
+        Authorization: 'Bearer ' + token,
       };
       axios
         .delete(`https://localhost:7185/api/Article/${item}`, {
@@ -169,13 +152,13 @@ export default {
         })
         .then((res) => {
           if (res.status == 200) {
-            alert("Delete Success!!");
+            alert('Delete Success!!');
             this.testApi();
           }
         });
     },
     ...mapActions({
-      setIdArticle: "setIdArticle",
+      setIdArticle: 'setIdArticle',
     }),
     setPage(page) {
       this.currentPage = page;
