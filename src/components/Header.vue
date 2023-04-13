@@ -38,15 +38,16 @@
     <nav class="header__nav-wrap">
       <ul class="header__nav">
         <li class="current">
-          <router-link @click="reloadPage" to="/">Home</router-link>
+          <a v-on:click="reloadPage"><router-link to="/">Home</router-link></a>
         </li>
 
         <li class="has-children">
           <a href="#0" title="">Categories</a>
           <ul class="sub-menu">
             <li v-for="category in categories" :key="category.id">
-              <a v-on:click="searchByCategory(category.id)" href="#">{{ category.name }}</a>
-              <!-- <router-link :to="'/category/' + category.code">{{ category.name }}</router-link> -->
+              <a v-on:click="searchByCategory(category.id)" href="#">
+                <router-link :to="'/category/' + category.code">{{ category.name }}</router-link>
+              </a>
             </li>
           </ul>
         </li>
@@ -117,7 +118,6 @@ export default {
       .get('https://localhost:7185/api/Category')
       .then((response) => {
         this.categories = response.data;
-        console.log(this.categories);
       })
       .catch((error) => {
         console.log(error);
@@ -131,10 +131,7 @@ export default {
   methods: {
     search() {
       if (this.title.trim() != '') {
-        axios.get(`https://localhost:7185/api/Article/search/${this.title}`).then((res) => {
-          this.table_data = res.data.data;
-          store.commit('setTableData', this.table_data);
-        });
+        store.commit('setTableData', this.title);
       } else {
         store.commit('setTableData', '');
       }

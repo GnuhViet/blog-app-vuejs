@@ -48,15 +48,15 @@
         <div v-if="totalPages > 1">
           <ul class="pagination">
             <li :class="{ disabled: !hasPreviousPage }">
-              <a class="pgn__prev" href="#" @click.prevent="testApi(this.titleName,pageNumber - 1)">
+              <a class="pgn__prev" href="#" @click.prevent="categoryFilter(this.category_id,pageNumber - 1)">
                 <span>&laquo;</span>
               </a>
             </li>
             <li v-for="page in pages" :key="page" :class="{ active: page === pageNumber }">
-              <a class="pgn__num" href="#" @click.prevent="testApi(this.titleName,page)">{{ page }}</a>
+              <a class="pgn__num" href="#" @click.prevent="categoryFilter(this.category_id,page)">{{ page }}</a>
             </li>
             <li :class="{ disabled: !hasNextPage }">
-              <a class="pgn__next" href="#" @click.prevent="testApi(this.titleName,pageNumber + 1)">
+              <a class="pgn__next" href="#" @click.prevent="categoryFilter(this.category_id,pageNumber + 1)">
                 <span>&raquo;</span>
               </a>
             </li>
@@ -73,7 +73,7 @@ import { mapGetters, useStore } from 'vuex';
 import router from '@/router';
 // import Pagination from 'vue-pagination-2';
 export default {
-  name: 'Master',
+  name: 'Category',
   components: {
     // Pagination,
   },
@@ -82,19 +82,18 @@ export default {
       table_data: [],
       category_id: '',
       pageNumber: 1,
-      pageSize: 4,
+      pageSize: 9,
       totalPages: 1,
       totalRecords: 0,
       nextPage: null,
       previousPage: null,
       articles: [],
-      titleName: '',
       loading: true,
     };
   },
-  created() {
-    this.testApi(this.titleName,this.pageNumber);
-  },
+//   created() {
+//     this.testApi(this.pageNumber);
+//   },
   computed: {
     hasPreviousPage() {
       return this.previousPage !== null;
@@ -115,13 +114,9 @@ export default {
     }),
   },
   watch: {
-    tableData(newValue) {
-      if (newValue != '') {
-        this.titleName = newValue;
-        this.testApi(this.titleName, this.pageNumber);
-      } else {
-        this.testApi(this.titleName,this.pageNumber);
-      }
+    categoryId(newValue) {
+      this.category_id = newValue;
+      this.categoryFilter(this.category_id, this.pageNumber);
     },
   },
 
@@ -135,46 +130,23 @@ export default {
       store.dispatch('setAuth', false);
     }
     // Load trang đầu tiên khi component được render
-    this.testApi(this.titleName,this.pageNumber);
+    // this.categoryFilter(this.category_id,this.pageNumber);
   },
 
   methods: {
-    testApi(titleName,pageNumber) {
-      if(titleName == ''){
-        axios.get(`https://localhost:7185/api/Article?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
-        .then((res) => {
-          let table_data = res.data;
-          this.pageNumber = table_data.pageNumber;
-          this.totalPages = table_data.totalPages;
-          this.totalRecords = table_data.totalRecords;
-          this.nextPage = table_data.nextPage;
-          this.previousPage = table_data.previousPage;
-          this.articles = table_data.data;
-          this.loading = false;
-        })
-        .catch((error) => {
-          console.log(error);
-          this.loading = false;
-        });
-      }
-      else{
-        axios.get(`https://localhost:7185/api/Article/search/${titleName}?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
-        .then((res) => {
-          let table_data = res.data;
-          this.pageNumber = table_data.pageNumber;
-          this.totalPages = table_data.totalPages;
-          this.totalRecords = table_data.totalRecords;
-          this.nextPage = table_data.nextPage;
-          this.previousPage = table_data.previousPage;
-          this.articles = table_data.data;
-          this.loading = false;
-        })
-        .catch((error) => {
-          console.log(error);
-          this.loading = false;
-        });
-      }
-      
+    categoryFilter(category_id, pageNumber){
+        console.log(category_id);
+      axios.get(`https://localhost:7185/api/Article/category/${category_id}?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
+      .then((res) => {
+        let table_data = res.data;
+        this.pageNumber = table_data.pageNumber;
+        this.totalPages = table_data.totalPages;
+        this.totalRecords = table_data.totalRecords;
+        this.nextPage = table_data.nextPage;
+        this.previousPage = table_data.previousPage;
+        this.articles = table_data.data;
+        this.loading = false;
+      });
     },
     setPage(page) {
       this.currentPage = page;
