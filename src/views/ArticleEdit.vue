@@ -1,5 +1,5 @@
 <template>
-    <h3 class="h2">Update Article</h3>
+  <h3 class="h2">Update Article</h3>
 
     <form name="contactForm" id="contactForm" method="post" action="" autocomplete="off">
         <fieldset>
@@ -14,20 +14,38 @@
                 </div>
             </div>
 
-            <div class="form-field">
-                <input name="cTitle" id="cTitle" class="full-width" placeholder="Title" type="text"
-                    v-model="inputData.title">
-            </div>
+      <div class="form-field">
+        <input
+          name="cTitle"
+          id="cTitle"
+          class="full-width"
+          placeholder="Title"
+          type="text"
+          v-model="inputData.title"
+        />
+      </div>
 
-            <div class="form-field">
-                <input name="cThumbnail" id="cThumbnail" class="full-width" placeholder="Thumbnail" type="text"
-                    v-model="inputData.thumbnail">
-            </div>
+      <div class="form-field">
+        <input
+          name="cThumbnail"
+          id="cThumbnail"
+          class="full-width"
+          placeholder="Thumbnail"
+          type="text"
+          v-model="inputData.thumbnail"
+        />
+      </div>
 
-            <div class="form-field">
-                <input name="cDescription" id="cDescription" class="full-width" placeholder="Description" type="text"
-                    v-model="inputData.shortDescription">
-            </div>
+      <div class="form-field">
+        <input
+          name="cDescription"
+          id="cDescription"
+          class="full-width"
+          placeholder="Description"
+          type="text"
+          v-model="inputData.shortDescription"
+        />
+      </div>
 
             <editor v-model="inputData.content" api-key="dbg7svsu8ovrt7sgcc1su1vw1rdya8ygm0ll3im2av4185gi" :init="{
                 height,
@@ -58,11 +76,17 @@
                 content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
             }" />
 
-            <input @click.prevent="updateForm()" name="submit" id="submit"
-                class="btn btn--primary btn-wide btn--large full-width" value="Update Post" type="submit">
-
-        </fieldset>
-    </form> <!-- end form -->
+      <input
+        @click.prevent="updateForm()"
+        name="submit"
+        id="submit"
+        class="btn btn--primary btn-wide btn--large full-width"
+        value="Update Post"
+        type="submit"
+      />
+    </fieldset>
+  </form>
+  <!-- end form -->
 </template>
 
 <script>
@@ -162,10 +186,11 @@ export default {
 
 <style>
 .categories-container {
-    display: flex;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .category {
-    flex-basis: 33.33%;
-}</style>
+  flex-basis: 33.33%;
+}
+</style>

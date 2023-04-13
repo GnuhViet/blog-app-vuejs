@@ -13,7 +13,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in articles" :key="item.id">
+            <tr v-for="item in articles" :key="item.id">
               <td>{{ item.title }}</td>
               <td>{{ item.formattedCreateDate }}</td>
               <td>{{ item.shortDescription }}</td>
@@ -58,13 +58,13 @@
     </div>
   </div>
 </template>
-    
+
 <script>
-import axios from "axios";
-import { mapActions, useStore } from "vuex";
-import store from "@/store";
+import axios from 'axios';
+import { mapActions, useStore } from 'vuex';
+import store from '@/store';
 export default {
-  name: "Manage",
+  name: 'Manage',
   data() {
     return {
       table_data: [],
@@ -101,28 +101,30 @@ export default {
   },
   mounted() {
     const store = useStore();
-    let jwt = sessionStorage.getItem("JWT");
+    let jwt = sessionStorage.getItem('JWT');
     if (jwt != null) {
-      store.dispatch("setAuth", true);
+      store.dispatch('setAuth', true);
     } else {
       //nếu chưa đăng nhập thì trả về trang login
-      store.dispatch("setAuth", false);
-    };
+      store.dispatch('setAuth', false);
+    }
     // Load trang đầu tiên khi component được render
     this.testApi(this.pageNumber);
   },
   methods: {
     testApi(pageNumber) {
-      var token = sessionStorage.getItem("JWT");
+      var token = sessionStorage.getItem('JWT');
 
       const headers = {
-        Authorization: "Bearer " + token,
+        Authorization: 'Bearer ' + token,
       };
 
       axios
-        .get(`https://localhost:7185/api/Article/manage?pageNumber=${pageNumber}&pageSize=${this.pageSize}`, {
-          headers: headers,
-        }
+        .get(
+          `https://localhost:7185/api/Article/manage?pageNumber=${pageNumber}&pageSize=${this.pageSize}`,
+          {
+            headers: headers,
+          },
         )
         .then((res) => {
           let table_data = res.data;
@@ -144,10 +146,10 @@ export default {
       store.commit("setIdArticle", item);
     },
     deleteItem(item) {
-      var token = sessionStorage.getItem("JWT");
+      var token = sessionStorage.getItem('JWT');
 
       const headers = {
-        Authorization: "Bearer " + token,
+        Authorization: 'Bearer ' + token,
       };
       axios
         .delete(`https://localhost:7185/api/Article/${item}`, {
@@ -166,7 +168,7 @@ export default {
         });
     },
     ...mapActions({
-      setIdArticle: "setIdArticle",
+      setIdArticle: 'setIdArticle',
     }),
     setPage(page) {
       this.currentPage = page;

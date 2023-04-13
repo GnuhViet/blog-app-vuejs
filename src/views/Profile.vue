@@ -2,8 +2,15 @@
   <body>
     <div v-if="!isEditing" class="profile">
       <img
-        :src= "table_data.avatar ? table_data.avatar : (imagePreview ? imagePreview : 'https://cdn-icons-png.flaticon.com/512/149/149071.png')"
-        alt="User Avatar">
+        :src="
+          table_data.avatar
+            ? table_data.avatar
+            : imagePreview
+            ? imagePreview
+            : 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+        "
+        alt="User Avatar"
+      />
       <h1>{{ table_data.username }}</h1>
       <table>
         <tr>
@@ -22,18 +29,35 @@
       <button @click="isEditing = true">Edit</button>
     </div>
     <div v-else class="profile">
-      <img id="editImage" :src="table_data.avatar ? table_data.avatar : (imagePreview ? imagePreview : 'https://cdn-icons-png.flaticon.com/512/149/149071.png')" alt="User Avatar"
-        v-if="isEditing" onclick="document.getElementById('input-image').click()">
+      <img
+        id="editImage"
+        :src="
+          table_data.avatar
+            ? table_data.avatar
+            : imagePreview
+            ? imagePreview
+            : 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+        "
+        alt="User Avatar"
+        v-if="isEditing"
+        onclick="document.getElementById('input-image').click()"
+      />
       <form @submit.prevent="saveData">
-        <input id="input-image" type="file" style="display: none" accept="image/*" @change="handleImageUpload">
+        <input
+          id="input-image"
+          type="file"
+          style="display: none"
+          accept="image/*"
+          @change="handleImageUpload"
+        />
         <label class="username-label">Username:</label>
-        <input class="username-input" type="text" v-model="table_data.username" readonly>
+        <input class="username-input" type="text" v-model="table_data.username" readonly />
         <label>Full name:</label>
-        <input type="text" v-model="table_data.fullName">
+        <input type="text" v-model="table_data.fullName" />
         <label>Email:</label>
-        <input type="email" v-model="table_data.email">
+        <input type="email" v-model="table_data.email" />
         <label>Phone:</label>
-        <input type="tel" v-model="table_data.phoneNumber">
+        <input type="tel" v-model="table_data.phoneNumber" />
         <button type="submit">Save</button>
         <button type="button" @click="cancelEdit">Cancel</button>
       </form>
@@ -45,38 +69,37 @@
 import axios from 'axios';
 import { useStore } from 'vuex';
 export default {
-  components: {
-
-  },
+  components: {},
   data() {
     return {
       table_data: {},
       isEditing: false,
       imageFile: null,
-      imagePreview: null
-    }
+      imagePreview: null,
+    };
   },
   created() {
     this.testApi();
   },
   methods: {
     testApi() {
-      var token = sessionStorage.getItem("JWT");
+      var token = sessionStorage.getItem('JWT');
 
       const headers = {
-        'Authorization': "Bearer " + token,
-      }
+        Authorization: 'Bearer ' + token,
+      };
 
-      axios.get("https://localhost:7185/api/Account/UserDetails", {
-        headers: headers,
-      })
+      axios
+        .get('https://localhost:7185/api/Account/UserDetails', {
+          headers: headers,
+        })
         .then((res) => {
           let resc = res.data.user;
           this.blogUserId = resc.blogUserId;
           this.table_data = resc;
           console.log(this.table_data);
           if (this.table_data.avatar !== null) {
-            this.table_data.avatar = 'https://localhost:7185' + this.table_data.avatar
+            this.table_data.avatar = 'https://localhost:7185' + this.table_data.avatar;
           }
           console.log(this.table_data);
         })
@@ -93,20 +116,21 @@ export default {
       });
     },
     saveData() {
-      var token = sessionStorage.getItem("JWT");
+      var token = sessionStorage.getItem('JWT');
 
       const headers = {
-        'Authorization': "Bearer " + token,
-      }
+        Authorization: 'Bearer ' + token,
+      };
 
       this.table_data.blogUserId = this.blogUserId;
 
       if (this.imageFile) {
         this.toBase64(this.imageFile).then((base64String) => {
           this.table_data.avatar = base64String;
-          axios.put("https://localhost:7185/api/Account/UserDetails", this.table_data, {
-            headers: headers,
-          })
+          axios
+            .put('https://localhost:7185/api/Account/UserDetails', this.table_data, {
+              headers: headers,
+            })
             .then((res) => {
               console.log(res);
               this.isEditing = false;
@@ -116,9 +140,10 @@ export default {
             });
         });
       } else {
-        axios.put("https://localhost:7185/api/Account/UserDetails", this.table_data, {
-          headers: headers,
-        })
+        axios
+          .put('https://localhost:7185/api/Account/UserDetails', this.table_data, {
+            headers: headers,
+          })
           .then((res) => {
             console.log(res);
             this.isEditing = false;
@@ -133,7 +158,7 @@ export default {
       this.imagePreview = this.table_data.avatar ? this.table_data.avatar : null;
       this.table_data = {
         ...this.table_data,
-        avatar: null // or default image url
+        avatar: null, // or default image url
       };
     },
     async toBase64(file) {
@@ -141,11 +166,11 @@ export default {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
+        reader.onerror = (error) => reject(error);
       });
     },
-  }
-}
+  },
+};
 </script>
 
 <style>
@@ -209,4 +234,3 @@ export default {
   background-color: #f9f9f9;
 }
 </style>
-
