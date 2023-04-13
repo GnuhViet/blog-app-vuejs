@@ -82,7 +82,7 @@ export default {
       table_data: [],
       category_id: '',
       pageNumber: 1,
-      pageSize: 9,
+      pageSize: 4,
       totalPages: 1,
       totalRecords: 0,
       nextPage: null,

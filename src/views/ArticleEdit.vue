@@ -7,24 +7,26 @@
                 <div class="categories-container">
                     <div v-for="category in categories" :key="category.id" class="category">
                         <label :for="'category-' + category.id">
-                        <input type="checkbox" :id="'category-' + category.id" :value="category.id" 
-                            v-model="inputData.categoryIds">
-                        {{ category.name }}
-                    </label>
+                            <input type="checkbox" :id="'category-' + category.id" :value="category.id" v-model="inputData.categoryIds">
+                            {{ category.name }}
+                        </label>
                     </div>
                 </div>
             </div>
 
             <div class="form-field">
-                <input name="cTitle" id="cTitle" class="full-width" placeholder="Title" type="text" v-model="inputData.title">
+                <input name="cTitle" id="cTitle" class="full-width" placeholder="Title" type="text"
+                    v-model="inputData.title">
             </div>
 
             <div class="form-field">
-                <input name="cThumbnail" id="cThumbnail" class="full-width" placeholder="Thumbnail" type="text" v-model="inputData.thumbnail">
+                <input name="cThumbnail" id="cThumbnail" class="full-width" placeholder="Thumbnail" type="text"
+                    v-model="inputData.thumbnail">
             </div>
 
             <div class="form-field">
-                <input name="cDescription" id="cDescription" class="full-width" placeholder="Description" type="text" v-model="inputData.shortDescription">
+                <input name="cDescription" id="cDescription" class="full-width" placeholder="Description" type="text"
+                    v-model="inputData.shortDescription">
             </div>
 
             <editor v-model="inputData.content" api-key="dbg7svsu8ovrt7sgcc1su1vw1rdya8ygm0ll3im2av4185gi" :init="{
@@ -49,14 +51,15 @@
                     'media',
                     'table',
                     'emoticons',
+                    'fullscreen',
                 ],
                 toolbar:
-                    'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image preview emoticons',
+                    'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image preview emoticons | fullscreen',
                 content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
             }" />
 
-            <input @click.prevent="updateForm()" name="submit" id="submit" class="btn btn--primary btn-wide btn--large full-width" value="Update Post"
-                type="submit">
+            <input @click.prevent="updateForm()" name="submit" id="submit"
+                class="btn btn--primary btn-wide btn--large full-width" value="Update Post" type="submit">
 
         </fieldset>
     </form> <!-- end form -->
@@ -93,20 +96,30 @@ export default {
         const store = useStore();
         let jwt = sessionStorage.getItem("JWT");
         console.log(jwt);
-        if(jwt != null){
+        if (jwt != null) {
             store.dispatch('setAuth', true);
         };
         this.whenMounted();
+        this.getArticle();
     },
     computed: {
         ...mapGetters({
             idArticle: 'getIdArticle',
         })
     },
-    watch: {
-        idArticle(newValue){
-            this.articleId = newValue;
-            axios.get(`https://localhost:7185/api/Article/${this.articleId}`)
+    methods: {
+        whenMounted() {
+            axios.get('https://localhost:7185/api/Category')
+                .then(response => {
+                    this.categories = response.data;
+                })
+                .catch(error => {
+                    console.log(error); a
+                });
+        },
+        getArticle() {
+            const id = this.$route.params.id;
+            axios.get(`https://localhost:7185/api/Article/${id}`)
                 .then((res) => {
                     const articleData = res.data;
                     this.inputData.id = articleData.id;
@@ -116,26 +129,15 @@ export default {
                     this.inputData.content = articleData.content;
                     let categoryLength = articleData.categories;
                     console.log(categoryLength);
-                    for(let i=0; i<categoryLength.length; i++){
-                        this.categoriesChecked = articleData.categories[i].id;
+                    for (let i = 0; i < categoryLength.length; i++) {
+                        this.inputData.categoryIds.push(articleData.categories[i].id);
                     }
                 })
                 .catch((err) => {
                     console.log(err);
                 })
-        }
-    },
-    methods: {
-        whenMounted(){
-            axios.get('https://localhost:7185/api/Category')
-                .then(response => {
-                    this.categories = response.data;
-                })
-                .catch(error => {
-                    console.log(error);
-                });
         },
-        updateForm(){
+        updateForm() {
             var token = sessionStorage.getItem("JWT");
             const router = useRouter();
             const headers = {
@@ -144,15 +146,15 @@ export default {
             axios.put(`https://localhost:7185/api/Article/${this.inputData.id}`, this.inputData, {
                 headers: headers,
             })
-            .then((res) => {
-                if(res.status == 200){
-                    alert("Update success!!");
-                    this.$router.push('/manage');
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            })
+                .then((res) => {
+                    if (res.status == 200) {
+                        alert("Update success!!");
+                        this.$router.push('/manage');
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
         }
     }
 }
@@ -166,5 +168,4 @@ export default {
 
 .category {
     flex-basis: 33.33%;
-}
-</style>
+}</style>

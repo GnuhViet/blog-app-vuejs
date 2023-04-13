@@ -13,18 +13,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in articles" :key="index.id">
+            <tr v-for="(item, index) in articles" :key="item.id">
               <td>{{ item.title }}</td>
               <td>{{ item.formattedCreateDate }}</td>
               <td>{{ item.shortDescription }}</td>
               <td>
-                <button v-on:click="transferTitle(item.id)" class="btn">
-                  <router-link :to="'/edit/' + item.id">Edit</router-link>
-                </button>
-                <button
-                  v-on:click="deleteItem(item.id)"
-                  class="btn btn--primary"
-                >
+                <router-link :to="'/edit/' + item.id">
+                  <button @click="transferItemId(item.id)" class="btn">Edit</button>
+                </router-link>
+                <button v-on:click="deleteItem(item.id)" class="btn btn--primary">
                   Delete
                 </button>
               </td>
@@ -41,29 +38,17 @@
         <div v-if="totalPages > 1">
           <ul class="pagination">
             <li :class="{ disabled: !hasPreviousPage }">
-              <a
-                class="pgn__prev"
-                href="#"
-                @click.prevent="testApi(pageNumber - 1)"
-              >
+              <a class="pgn__prev" href="#" @click.prevent="testApi(pageNumber - 1)">
                 <span>&laquo;</span>
               </a>
             </li>
-            <li
-              v-for="page in pages"
-              :key="page"
-              :class="{ active: page === pageNumber }"
-            >
+            <li v-for="page in pages" :key="page" :class="{ active: page === pageNumber }">
               <a class="pgn__num" href="#" @click.prevent="testApi(page)">{{
                 page
               }}</a>
             </li>
             <li :class="{ disabled: !hasNextPage }">
-              <a
-                class="pgn__next"
-                href="#"
-                @click.prevent="testApi(pageNumber + 1)"
-              >
+              <a class="pgn__next" href="#" @click.prevent="testApi(pageNumber + 1)">
                 <span>&raquo;</span>
               </a>
             </li>
@@ -84,7 +69,7 @@ export default {
     return {
       table_data: [],
       pageNumber: 1,
-      pageSize: 9,
+      pageSize: 4,
       totalPages: 1,
       totalRecords: 0,
       nextPage: null,
@@ -135,9 +120,9 @@ export default {
       };
 
       axios
-        .get(`https://localhost:7185/api/Article/manage?pageNumber=${pageNumber}&pageSize=${this.pageSize}`,{
-            headers: headers,
-          }
+        .get(`https://localhost:7185/api/Article/manage?pageNumber=${pageNumber}&pageSize=${this.pageSize}`, {
+          headers: headers,
+        }
         )
         .then((res) => {
           let table_data = res.data;
@@ -154,7 +139,8 @@ export default {
           this.loading = false;
         });
     },
-    transferTitle(item) {
+    transferItemId(item) {
+      console.log(item);
       store.commit("setIdArticle", item);
     },
     deleteItem(item) {
@@ -169,8 +155,13 @@ export default {
         })
         .then((res) => {
           if (res.status == 200) {
-            alert("Delete Success!!");
-            this.testApi();
+            // Nếu dữ liệu bị xóa là dữ liệu cuối cùng của trang, trở lại trang trước đó
+            if (this.articles.length === 1 && this.pageNumber > 1) {
+              this.testApi(this.pageNumber - 1);
+            } else {
+              // Nếu không, load lại trang hiện tại
+              this.testApi(this.pageNumber);
+            }
           }
         });
     },
