@@ -18,38 +18,43 @@
             </li>
             <li class="date">{{ article.formattedCreateDate }}</li>
             <li class="cat-links">
-              <a
-                v-for="category in article.categories"
-                :key="category.id"
-                :href="'category.html?id=' + category.id"
-                >{{ category.name }}</a
-              >
+              <a v-for="category in article.categories" :key="category.id" :href="'category.html?id=' + category.id">{{
+                category.name }}</a>
             </li>
           </ul>
         </div>
         <div class="entry__content" v-html="article.content"></div>
       </article>
+      <div class="entry__related">
+        <h3 class="h2">Related Articles</h3>
+
+        <ul class="related">
+          <li v-for="(item, index) in relatedArticle" :key="index" class="related__item">
+            <a href="#" class="related__link">
+              <img style="width: 280px; height: 150px;" :src="item.thumbnail" alt="">
+            </a>
+
+            <a v-on:click="loadDetail(item.id)" class="related__post-title">
+              <router-link :to="'/details/' + item.id">{{ item.title }}</router-link>
+            </a>
+          </li>
+        </ul>
+      </div> <!-- end entry related -->
 
       <div class="column large-full entry format-standard comments-wrap">
         <div id="comments" class="column large-12">
-          <h3 class="h2">{{ comments.length + " Comments"|| "0 Comments"}}</h3>
+          <h3 class="h2">{{ comments.length + " Comments" || "0 Comments" }}</h3>
           <!-- START commentlist -->
           <ol class="commentlist">
             <li v-for="comment in comments" :key="comment.id" class="depth-1 comment">
               <div class="comment__avatar">
-                <img
-                  class="avatar"
-                  :src="
-                    comment.authorAvatar
-                      ? 'https://localhost:7185' + comment.authorAvatar
-                      : imagePreview
+                <img class="avatar" :src="
+                  comment.authorAvatar
+                    ? 'https://localhost:7185' + comment.authorAvatar
+                    : imagePreview
                       ? imagePreview
                       : 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
-                  "
-                  alt=""
-                  width="50"
-                  height="50"
-                />
+                " alt="" width="50" height="50" />
               </div>
               <div class="comment__content">
                 <div class="comment__info">
@@ -72,28 +77,13 @@
           <!-- START respond -->
           <div id="respond">
             <h3 class="h2">Add new comment</h3>
-            <form
-              name="contactForm"
-              id="contactForm"
-              @submit.prevent="addComment"
-              autocomplete="off"
-            >
+            <form name="contactForm" id="contactForm" @submit.prevent="addComment" autocomplete="off">
               <fieldset>
                 <div class="message form-field">
-                  <textarea
-                    name="cMessage"
-                    id="cMessage"
-                    class="full-width"
-                    placeholder="Your Message"
-                  ></textarea>
+                  <textarea name="cMessage" id="cMessage" class="full-width" placeholder="Your Message"></textarea>
                 </div>
-                <input
-                  name="submit"
-                  id="submit"
-                  class="btn btn--primary btn-wide btn--large full-width"
-                  value="Add Comment"
-                  type="submit"
-                />
+                <input name="submit" id="submit" class="btn btn--primary btn-wide btn--large full-width"
+                  value="Add Comment" type="submit" />
               </fieldset>
             </form>
             <!-- end form -->
@@ -117,6 +107,9 @@ export default {
   data() {
     return {
       article: {},
+      relatedArticle: [],
+      categories: [],
+      categoriesId: [],
       comments: [],
     };
   },
@@ -135,13 +128,17 @@ export default {
       .get(`https://localhost:7185/api/Article/${articleId}`)
       .then((response) => {
         this.article = response.data;
+        this.categories = this.article.categories;
         console.log(response.data);
+
+        this.loadRelative();
       })
       .catch((error) => {
         console.log(error);
       });
 
     this.loadComments();
+    // this.loadRelative();
   },
   methods: {
     loadComments() {
@@ -154,6 +151,34 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    loadRelative() {
+      console.log(this.categories[0].id);
+      for (let i = 0; i < this.categories.length; i++) {
+        axios.get(`https://localhost:7185/api/Article/category/${this.categories[i].id}`)
+          .then((res) => {
+            console.log(res);
+            this.relatedArticle = res.data.data;
+            console.log(this.relatedArticle.data);
+          })
+      }
+    },
+    loadDetail(item) {
+      axios
+        .get(`https://localhost:7185/api/Article/${item}`)
+        .then((response) => {
+          this.article = response.data;
+          this.categories = this.article.categories;
+          console.log(response.data);
+
+          this.loadRelative();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      this.loadComments();
+
     },
     addComment(event) {
       event.preventDefault();
@@ -185,8 +210,14 @@ export default {
   padding-left: 110px !important;
 }
 
-p, h2, h3, h4, h5, h6, ul, li {
+p,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul,
+li {
   background-color: transparent !important;
 }
-
 </style>

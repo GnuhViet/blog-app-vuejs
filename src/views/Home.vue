@@ -140,7 +140,8 @@ export default {
 
   methods: {
     testApi(titleName,pageNumber) {
-      if(titleName == ''){
+      console.log(titleName);
+      if(titleName === ''){
         axios.get(`https://localhost:7185/api/Article?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
         .then((res) => {
           let table_data = res.data;
