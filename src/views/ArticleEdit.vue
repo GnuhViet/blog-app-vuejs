@@ -133,7 +133,7 @@ export default {
     },
     methods: {
         whenMounted() {
-            axios.get('https://localhost:7185/api/Category')
+            axios.get('http://localhost:5000/api/Category')
                 .then(response => {
                     this.categories = response.data;
                 })
@@ -143,7 +143,7 @@ export default {
         },
         getArticle() {
             const id = this.$route.params.id;
-            axios.get(`https://localhost:7185/api/Article/${id}`)
+            axios.get(`http://localhost:5000/api/Article/${id}`)
                 .then((res) => {
                     const articleData = res.data;
                     this.inputData.id = articleData.id;
@@ -167,7 +167,7 @@ export default {
             const headers = {
                 'Authorization': "Bearer " + token,
             }
-            axios.put(`https://localhost:7185/api/Article/${this.inputData.id}`, this.inputData, {
+            axios.put(`http://localhost:5000/api/Article/${this.inputData.id}`, this.inputData, {
                 headers: headers,
             })
                 .then((res) => {

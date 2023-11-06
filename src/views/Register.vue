@@ -56,7 +56,7 @@ export default {
     const submit = async () => {
       const json = JSON.stringify(data);
       const res = await axios
-        .post('https://localhost:7185/api/Account/SignUp', json, {
+        .post('http://localhost:5000/api/Account/SignUp', json, {
           headers: headers,
         })
         .catch(function (error) {

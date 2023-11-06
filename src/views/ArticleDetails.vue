@@ -125,7 +125,7 @@ export default {
 
     const articleId = this.$route.params.id;
     axios
-      .get(`https://localhost:7185/api/Article/${articleId}`)
+      .get(`http://localhost:5000/api/Article/${articleId}`)
       .then((response) => {
         this.article = response.data;
         this.categories = this.article.categories;
@@ -144,7 +144,7 @@ export default {
     loadComments() {
       const articleId = this.$route.params.id;
       axios
-        .get(`https://localhost:7185/api/Comment/${articleId}`)
+        .get(`http://localhost:5000/api/Comment/${articleId}`)
         .then((response) => {
           this.comments = response.data;
         })
@@ -155,7 +155,7 @@ export default {
     loadRelative() {
       console.log(this.categories[0].id);
       for (let i = 0; i < this.categories.length; i++) {
-        axios.get(`https://localhost:7185/api/Article/category/${this.categories[i].id}`)
+        axios.get(`http://localhost:5000/api/Article/category/${this.categories[i].id}`)
           .then((res) => {
             console.log(res);
             this.relatedArticle = res.data.data;
@@ -165,7 +165,7 @@ export default {
     },
     loadDetail(item) {
       axios
-        .get(`https://localhost:7185/api/Article/${item}`)
+        .get(`http://localhost:5000/api/Article/${item}`)
         .then((response) => {
           this.article = response.data;
           this.categories = this.article.categories;
@@ -191,7 +191,7 @@ export default {
         Authorization: 'Bearer ' + token,
       };
       axios
-        .post(`https://localhost:7185/api/Comment/${articleId}`, formData, { headers })
+        .post(`http://localhost:5000/api/Comment/${articleId}`, formData, { headers })
         .then((res) => {
           this.commentContent = '';
           this.loadComments();

@@ -90,7 +90,7 @@ export default {
       };
 
       axios
-        .get('https://localhost:7185/api/Account/UserDetails', {
+        .get('http://localhost:5000/api/Account/UserDetails', {
           headers: headers,
         })
         .then((res) => {
@@ -99,7 +99,7 @@ export default {
           this.table_data = resc;
           console.log(this.table_data);
           if (this.table_data.avatar !== null) {
-            this.table_data.avatar = 'https://localhost:7185' + this.table_data.avatar;
+            this.table_data.avatar = 'http://localhost:5000' + this.table_data.avatar;
           }
           console.log(this.table_data);
         })
@@ -128,7 +128,7 @@ export default {
         this.toBase64(this.imageFile).then((base64String) => {
           this.table_data.avatar = base64String;
           axios
-            .put('https://localhost:7185/api/Account/UserDetails', this.table_data, {
+            .put('http://localhost:5000/api/Account/UserDetails', this.table_data, {
               headers: headers,
             })
             .then((res) => {
@@ -141,7 +141,7 @@ export default {
         });
       } else {
         axios
-          .put('https://localhost:7185/api/Account/UserDetails', this.table_data, {
+          .put('http://localhost:5000/api/Account/UserDetails', this.table_data, {
             headers: headers,
           })
           .then((res) => {

@@ -124,7 +124,7 @@ export default {
     },
     methods: {
         whenMounted() {
-            axios.get('https://localhost:7185/api/Category')
+            axios.get('http://localhost:5000/api/Category')
                 .then(response => {
                     this.categories = response.data;
                 })
@@ -147,7 +147,7 @@ export default {
                 return;
             }
 
-            axios.post("https://localhost:7185/api/Article", this.inputData, {
+            axios.post("http://localhost:5000/api/Article", this.inputData, {
                 headers: headers,
             })
                 .then((res) => {

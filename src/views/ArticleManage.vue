@@ -121,7 +121,7 @@ export default {
 
       axios
         .get(
-          `https://localhost:7185/api/Article/manage?pageNumber=${pageNumber}&pageSize=${this.pageSize}`,
+          `http://localhost:5000/api/Article/manage?pageNumber=${pageNumber}&pageSize=${this.pageSize}`,
           {
             headers: headers,
           },
@@ -152,7 +152,7 @@ export default {
         Authorization: 'Bearer ' + token,
       };
       axios
-        .delete(`https://localhost:7185/api/Article/${item}`, {
+        .delete(`http://localhost:5000/api/Article/${item}`, {
           headers: headers,
         })
         .then((res) => {

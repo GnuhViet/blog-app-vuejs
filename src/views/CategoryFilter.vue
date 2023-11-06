@@ -136,7 +136,7 @@ export default {
   methods: {
     categoryFilter(category_id, pageNumber){
         console.log(category_id);
-      axios.get(`https://localhost:7185/api/Article/category/${category_id}?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
+      axios.get(`http://localhost:5000/api/Article/category/${category_id}?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
       .then((res) => {
         let table_data = res.data;
         this.pageNumber = table_data.pageNumber;

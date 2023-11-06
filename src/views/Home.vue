@@ -142,7 +142,7 @@ export default {
     testApi(titleName,pageNumber) {
       console.log(titleName);
       if(titleName === ''){
-        axios.get(`https://localhost:7185/api/Article?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
+        axios.get(`http://localhost:5000/api/Article?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
         .then((res) => {
           let table_data = res.data;
           this.pageNumber = table_data.pageNumber;
@@ -159,7 +159,7 @@ export default {
         });
       }
       else{
-        axios.get(`https://localhost:7185/api/Article/search/${titleName}?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
+        axios.get(`http://localhost:5000/api/Article/search/${titleName}?pageNumber=${pageNumber}&pageSize=${this.pageSize}`)
         .then((res) => {
           let table_data = res.data;
           this.pageNumber = table_data.pageNumber;

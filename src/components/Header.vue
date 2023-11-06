@@ -115,7 +115,7 @@ export default {
   },
   created() {
     axios
-      .get('https://localhost:7185/api/Category')
+      .get('http://localhost:5000/api/Category')
       .then((response) => {
         this.categories = response.data;
       })
